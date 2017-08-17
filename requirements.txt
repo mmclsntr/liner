@@ -1,0 +1,2 @@
+pymongo==3.5.0
+wiringpi==2.44.3
