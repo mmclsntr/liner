@@ -1,10 +1,11 @@
-import devicemanager as dm
+from devicemanager import DeviceManager
+from devicemanager import DeviceMode
 import time
 
 import signal
 import sys
 
-import datacollectorthread as dct
+from datacollectorthread import DataCollectorThread
 import nodeconnectorthread as nct
 
 devices = [
@@ -19,13 +20,13 @@ for device in devices:
   config = device['config']
   name = device['name']
   if device['mode'] == 'GPIO':
-    mode = dm.DeviceMode.GPIO
+    mode = DeviceMode.GPIO
 
-  devicemanager_ = dm.DeviceManager(mode, config)
+  devicemanager_ = DeviceManager(mode, config)
   devicemanager_.name = name
   devicemanager_.write(0)
   devicesdict[name] = devicemanager_
-  datacollector = dct.DataCollectorThread(devicemanager_, 0.5, 'dev')
+  datacollector = DataCollectorThread(devicemanager_, 0.5, 'dev')
   datacollectors.append(datacollector)
   datacollector.start()
 
