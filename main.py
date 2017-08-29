@@ -5,7 +5,7 @@ import time
 import signal
 import sys
 
-from datacollectorthread import DataCollectorThread
+from datastorethread import DataStoreThread
 import nodeconnectorthread as nct
 
 devices = [
@@ -26,9 +26,9 @@ for device in devices:
   devicemanager_.name = name
   devicemanager_.write(0)
   devicesdict[name] = devicemanager_
-  datacollector = DataCollectorThread(devicemanager_, 0.5, 'dev')
-  datacollectors.append(datacollector)
-  datacollector.start()
+  datastore = DataStoreThread(devicemanager_, 0.5, 'dev')
+  datacollectors.append(datastore)
+  datastore.start()
 
 
 nodeconnectorthread = nct.NodeConnectorThread(0.1, 'dev')

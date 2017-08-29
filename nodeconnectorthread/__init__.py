@@ -18,12 +18,12 @@ class NodeConnectorThread(threading.Thread):
   def __connectnodes(self):
     db = self.__databasehelper.get_database(self.__databasename)
     while self.__isrunning:
-      connectionscol = self.__databasehelper.get_collection(db, CONNECTER_COLLECTION_NAME)
-      connections = list(self.__databasehelper.find(connectionscol, {}))
-      #connections = [
-      #  {'event': {'nodename': 'gpio24', 'operator': '==', 'value': 1}, 'actions': [{'nodename': 'gpio23', 'value': 1}]},
-      #  {'event': {'nodename': 'gpio24', 'operator': '==', 'value': 0}, 'actions': [{'nodename': 'gpio23', 'value': 0}]}
-      #]
+      #connectionscol = self.__databasehelper.get_collection(db, CONNECTER_COLLECTION_NAME)
+      #connections = list(self.__databasehelper.find(connectionscol, {}))
+      connections = [
+        {'event': {'nodename': 'gpio24', 'operator': '==', 'value': 1}, 'actions': [{'nodename': 'gpio23', 'value': 1}]},
+        {'event': {'nodename': 'gpio24', 'operator': '==', 'value': 0}, 'actions': [{'nodename': 'gpio23', 'value': 0}]}
+      ]
 
       for connection in connections:
         event = connection['event']

@@ -1,8 +1,8 @@
 import enum
 import socket
+import wiringpi
 
 class GpioManager:
-  import wiringpi
   name = 'gpio_device'
 
   def __init__(self, pin_num: int):

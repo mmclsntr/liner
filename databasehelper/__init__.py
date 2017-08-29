@@ -12,7 +12,7 @@ class DataBaseHelper:
 
   def get_collection(self, database, name: str) -> pymongo.collection:
     self.collection = database[name]
-    database.command({"convertToCapped": name, "size": 1024 * 1024})
+    #database.command({"convertToCapped": name, "size": 1024 * 1024})
     return self.collection
 
   def insert(self, collection, doc):
