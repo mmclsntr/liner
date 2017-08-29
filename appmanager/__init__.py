@@ -2,7 +2,7 @@ import importlib
 import databasehelper
 from typing import Any
 
-DB_COLLECTION_APPS = 'local_apps'
+DB_COLLECTION_LOCALAPPS = 'local_apps'
 
 class AppManager:
   __instance = None
@@ -27,15 +27,18 @@ class AppManager:
       for config in listapp['configs']:
         configs[config['name']] = eval(config['type'])(config['value'])
       print(configs)
-      apps[listapp['id']] = app_module.NodeAppMain(configs)
+      apps[int(listapp['id'])] = app_module.NodeAppMain(configs)
     return apps
 
   def get_localapps(self) -> dict:
     return self.__apps
 
+  def get_localapp(self, _id: int) -> Any:
+    return self.__apps[_id]
+
   def list_localapps(self) -> list:
     db = self.__databasehelper.get_database(self.__dbname)
-    col = self.__databasehelper.get_collection(db, DB_COLLECTION_APPS)
+    col = self.__databasehelper.get_collection(db, DB_COLLECTION_LOCALAPPS)
     listapps = list(self.__databasehelper.find(col, {}))
     return listapps
     
@@ -48,6 +51,20 @@ class AppManager:
   
   def find_localapp_info(self, localapp_id: int) -> dict:
     pass
+  
+  def find_localapp_id_from_name(self, name: str) -> int:
+    db = self.__databasehelper.get_database(self.__dbname)
+    col = self.__databasehelper.get_collection(db, DB_COLLECTION_LOCALAPPS)
+    listapps = list(self.__databasehelper.find(col, {'name': name}))
+    localapp_id = listapps[0]['id']
+    return int(localapp_id)
+
+  def find_localapp_name_from_id(self, _id: int) -> str:
+    db = self.__databasehelper.get_database(self.__dbname)
+    col = self.__databasehelper.get_collection(db, DB_COLLECTION_LOCALAPPS)
+    listapps = list(self.__databasehelper.find(col, {'id': _id}))
+    localapp_name = listapps[0]['name']
+    return localapp_name
 
   def add(self, globalapp_id: int, config: dict) -> dict:
     pass
@@ -59,7 +76,8 @@ class AppManager:
     pass
 
   def read_app_value(self, localapp_id: int) -> Any:
-    pass
+    readvalue = self.__apps[localapp_id].read()
+    return readvalue
 
-  def write_app_value(self, localapp_id: int) -> Any:
-    pass
+  def write_app_value(self, localapp_id: int, value: Any) -> Any:
+    self.__apps[localapp_id].write(value)
