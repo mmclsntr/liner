@@ -20,6 +20,6 @@ class DataStoreManager:
       self.data_stores[_id] = datastorethread
 
   def killall(self):
-    for datastore in self.datastores:
+    for datastore in self.data_stores.values():
       datastore.kill()
 

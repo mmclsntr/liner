@@ -1,44 +1,24 @@
-from devicemanager import DeviceManager
-from devicemanager import DeviceMode
-import time
+from appmanager import AppManager
+from datastoremanager import DataStoreManager
+from nodeconnectormanager import NodeConnectorManager
 
 import signal
 import sys
 
-from datastorethread import DataStoreThread
-import nodeconnectorthread as nct
+appmanager = AppManager('dev')
 
-devices = [
-  {'name': 'gpio23', 'mode': 'GPIO', 'config': {'pin_num': 23}},
-  {'name': 'gpio24', 'mode': 'GPIO', 'config': {'pin_num': 24}}
-]
+apps = appmanager.get_localapps()
 
-datacollectors = []
-devicesdict = {}
+for app in apps.values():
+  print(app)
 
-for device in devices:
-  config = device['config']
-  name = device['name']
-  if device['mode'] == 'GPIO':
-    mode = DeviceMode.GPIO
+datastoremanager = DataStoreManager(appmanager, 'dev')
 
-  devicemanager_ = DeviceManager(mode, config)
-  devicemanager_.name = name
-  devicemanager_.write(0)
-  devicesdict[name] = devicemanager_
-  datastore = DataStoreThread(devicemanager_, 0.5, 'dev')
-  datacollectors.append(datastore)
-  datastore.start()
-
-
-nodeconnectorthread = nct.NodeConnectorThread(0.1, 'dev')
-nodeconnectorthread.setNodesDict(devicesdict)
-nodeconnectorthread.start()
+nodeconnectormanager = NodeConnectorManager(appmanager, 'dev')
 
 def handler(signal, frame):
-  for datacollector in datacollectors:
-    datacollector.kill()
-  nodeconnectorthread.kill()
+  datastoremanager.killall()
+  nodeconnectormanager.kill()
   sys.exit(0)
 
 signal.signal(signal.SIGINT, handler)

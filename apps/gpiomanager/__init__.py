@@ -10,11 +10,11 @@ class NodeAppMain(Node):
   def read(self):
     super(NodeAppMain, self).read()
     _value = self.__gpiomanager.read()
-    return _value
+    return int(_value)
 
-  def write(self, value: int):
+  def write(self, value):
     super(NodeAppMain, self).write(value)
-    self.__gpiomanager.write(value)
+    self.__gpiomanager.write(int(value))
 
 
 
