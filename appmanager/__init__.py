@@ -26,7 +26,7 @@ class AppManager:
       configs = {}
       for config in listapp['configs']:
         configs[config['name']] = eval(config['type'])(config['value'])
-      print(configs)
+      #print(configs)
       apps[int(listapp['id'])] = app_module.NodeAppMain(configs)
     return apps
 

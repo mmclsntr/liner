@@ -1,7 +1,7 @@
 import threading
 import databasehelper
-import devicemanager
 import time
+from appmanager import AppManager
 
 CONNECTER_COLLECTION_NAME = 'rules'
 

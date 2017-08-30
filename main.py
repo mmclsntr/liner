@@ -1,24 +1,13 @@
-from appmanager import AppManager
-from datastoremanager import DataStoreManager
-from nodeconnectormanager import NodeConnectorManager
-
-import signal
+from centralmanager import CentralManager
 import sys
+import signal
 
-appmanager = AppManager('dev')
-
-apps = appmanager.get_localapps()
-
-for app in apps.values():
-  print(app)
-
-datastoremanager = DataStoreManager(appmanager, 'dev')
-
-nodeconnectormanager = NodeConnectorManager(appmanager, 'dev')
+centralmanager = CentralManager()
+print('start')
 
 def handler(signal, frame):
-  datastoremanager.killall()
-  nodeconnectormanager.kill()
+  centralmanager.destroy()
+  print('end')
   sys.exit(0)
 
 signal.signal(signal.SIGINT, handler)
