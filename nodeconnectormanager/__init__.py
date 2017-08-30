@@ -11,7 +11,7 @@ class NodeConnectorManager:
 
   def __init__(self, app_manager: AppManager, dbname: str):
     self.__app_manager = app_manager
-    self.__nodeconnectorthread = RuleBaseConnectorThread(app_manager, 0.7, dbname)
+    self.__nodeconnectorthread = RuleBaseConnectorThread(app_manager, 0.5, dbname)
     self.__nodeconnectorthread.start()
 
   def kill(self):

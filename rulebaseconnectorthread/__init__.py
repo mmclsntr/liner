@@ -1,13 +1,22 @@
 import threading
 import databasehelper
 import time
+import logging
 from appmanager import AppManager
 
 CONNECTER_COLLECTION_NAME = 'rules'
 
 class RuleBaseConnectorThread(threading.Thread):
+  __instance = None
+
+  def __new__(cls, *args, **keys):
+    if cls.__instance is None:
+      cls.__instance = object.__new__(cls)
+    return cls.__instance
+
   def __init__(self, app_manager, interval, dbname):
     super(RuleBaseConnectorThread, self).__init__()
+    logging.basicConfig(level=logging.DEBUG)
     self.interval = interval
     self.__databasename = dbname
     self.__databasehelper = databasehelper.DataBaseHelper()
@@ -21,10 +30,6 @@ class RuleBaseConnectorThread(threading.Thread):
     while self.__isrunning:
       connectionscol = self.__databasehelper.get_collection(db, CONNECTER_COLLECTION_NAME)
       connections = list(self.__databasehelper.find(connectionscol, {}))
-      #connections = [
-      #  {'event': {'nodename': 'gpio24', 'operator': '==', 'value': 1}, 'actions': [{'nodename': 'gpio23', 'value': 1}]},
-      #  {'event': {'nodename': 'gpio24', 'operator': '==', 'value': 0}, 'actions': [{'nodename': 'gpio23', 'value': 0}]}
-      #]
 
       for connection in connections:
         event = connection['event']
@@ -43,6 +48,7 @@ class RuleBaseConnectorThread(threading.Thread):
 
         # Rule check
         if eval(firstrule) and not eval(secondrule):
+          logging.info('ignite: ' + str(connection))
           actions = connection['actions']
           for action in actions:
             app_id = self.__app_manager.find_localapp_id_from_name(action['nodename'])

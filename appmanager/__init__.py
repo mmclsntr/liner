@@ -1,6 +1,7 @@
 import importlib
 import databasehelper
 from typing import Any
+import logging
 
 DB_COLLECTION_LOCALAPPS = 'local_apps'
 
@@ -13,6 +14,7 @@ class AppManager:
     return cls.__instance
 
   def __init__(self, dbname: str):
+    logging.basicConfig(level=logging.DEBUG)
     self.__dbname = dbname
     self.__databasehelper = databasehelper.DataBaseHelper()
     self.__apps = self.__load_localapps()
@@ -20,6 +22,7 @@ class AppManager:
   def __load_localapps(self) -> dict:
     apps = {}
     listapps = self.list_localapps()
+    _debug_listapps = ""
     for listapp in listapps:
       app_module = importlib.import_module('apps.' + listapp['module_name'])
       # Rearrenge configs
@@ -28,6 +31,8 @@ class AppManager:
         configs[config['name']] = eval(config['type'])(config['value'])
       #print(configs)
       apps[int(listapp['id'])] = app_module.NodeAppMain(configs)
+      _debug_listapps += "\n" + str(listapp)
+    logging.debug('local apps: ' + _debug_listapps)
     return apps
 
   def get_localapps(self) -> dict:
