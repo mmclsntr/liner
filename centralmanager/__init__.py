@@ -1,6 +1,7 @@
 from datastoremanager import DataStoreManager
-from nodeconnectormanager import NodeConnectorManager
+from rulebaseconnectormanager import RuleBaseConnectorManager
 from appmanager import AppManager
+from devicemanager import DeviceManager
 
 DB_NAME = 'dev'
 
@@ -17,9 +18,10 @@ class CentralManager:
     #apps = appmanager.get_localapps()
     #for app in apps.values():
     #  print(app)
+    self.__devicemanager = DevicdeManager(self.__appmanager, 'dev')
     self.__datastoremanager = DataStoreManager(self.__appmanager, 'dev')
-    self.__nodeconnectormanager = NodeConnectorManager(self.__appmanager, 'dev')
+    self.__rulebaseconnectormanager = RuleBaseConnectorManager(self.__appmanager, 'dev')
 
   def destroy(self):
     self.__datastoremanager.killall()
-    self.__nodeconnectormanager.kill()
+    self.__rulebaseconnectormanager.kill()

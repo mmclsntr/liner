@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <h1>Device List</h1>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>name</th>
+            <th>apps</th>
+            <th>notes</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for device in devices %}
+            <tr>
+              <th>{{device.name}}</th>
+              <th>
+              {% for appid in device.local_apps %}
+                {% if local_apps %}
+                  {% for local_app in local_apps %}
+                    {% if appid|int == local_app.id|int %}
+                      {{local_app.name}}
+                    {% endif %}
+                  {% endfor %}
+                {% endif %}
+              {% endfor %}
+              </th>
+              <th>{{device.notes}}</th>
+              <th>
+                <form method="POST" action="/device/{{device.id|int}}">
+                  <button type="submit" class="btn btn-default">Setting</button>
+                </form>
+              </th>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

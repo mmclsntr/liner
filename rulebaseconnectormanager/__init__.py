@@ -1,7 +1,7 @@
 from rulebaseconnectorthread import RuleBaseConnectorThread
 from appmanager import AppManager
 
-class NodeConnectorManager:
+class RuleBaseConnectorManager:
   __instance = None
 
   def __new__(cls, *args, **keys):
