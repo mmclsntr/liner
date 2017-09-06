@@ -53,22 +53,52 @@ class DeviceView(FlaskView):
     return render_template('devices.html', devices=devicelist, local_apps=applist)
 
   @route('/<int:deviceid>/save/', methods=['POST'])
-  def save(self, deviceid):
+  def device_save(self, deviceid):
     appmanager = AppManager(self.dbname)
     devicemanager = DeviceManager(appmanager, self.dbname)
     devicelist = devicemanager.list_devices()
+    # TODO
     print(request.form)
     return redirect(url_for('DeviceView:list'))
   
-  @route('/<int:devieid>/app/<int:localappid>')
+  @route('/<int:deviceid>/app/<int:localappid>', methods=['GET', 'POST'])
   def localapp(self, deviceid, localappid):
-    return render_template('device_app.html')
+    appmanager = AppManager(self.dbname)
+    appinfo = appmanager.find_localapp_info(localappid)
+    return render_template('device_app.html', islocal=True, app=appinfo, deviceid=deviceid)
 
-  @route('/<int:deviceid>/store/')
+  @route('/<int:deviceid>/app/<int:localappid>/save/', methods=['POST'])
+  def localapp_save(self, deviceid, localappid):
+    appmanager = AppManager(self.dbname)
+    devicemanager = DeviceManager(appmanager, self.dbname)
+    devicelist = devicemanager.list_devices()
+    # TODO
+    print(request.form)
+    return redirect(url_for('DeviceView:get', deviceid=deviceid))
+
+  @route('/<int:deviceid>/store/', methods=['GET', 'POST'])
   def store(self, deviceid):
-    return render_template('store.html')
+    appmanager = AppManager(self.dbname)
+    applist = appmanager.list_globalapps()
+    return render_template('store.html', deviceid=deviceid, apps=applist)
 
-  @route('/<int:deviceid>/app/<int:localappid>/datastore/')
+  @route('/<int:deviceid>/store/<int:globalappid>', methods=['GET', 'POST'])
+  def globalapp(self, deviceid, globalappid):
+    appmanager = AppManager(self.dbname)
+    appinfo = appmanager.find_globalapp_info(globalappid)
+    return render_template('device_app.html', islocal=False, app=appinfo, deviceid=deviceid)
+  
+  @route('/<int:deviceid>/store/<int:localappid>/save/', methods=['POST'])
+  def globalapp_save(self, deviceid, localappid):
+    appmanager = AppManager(self.dbname)
+    devicemanager = DeviceManager(appmanager, self.dbname)
+    devicelist = devicemanager.list_devices()
+    # TODO
+    print(request.form)
+    return redirect(url_for('DeviceView:get', deviceid=deviceid))
+  
+
+  @route('/<int:deviceid>/app/<int:localappid>/datastore/', methods=['GET', 'POST'])
   def datastore(self, deviceid, localappid):
     return render_template('device_datastore.html')
 

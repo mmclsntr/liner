@@ -25,14 +25,10 @@
                               {% if appid|int == local_app.id|int %}
                                 <th>{{local_app.name}}</th>
                                 <th>
-                                  <form method="POST" action="/device/{{device.id}}/app/{{local_app.id}}">
-                                    <button type="submit" class="btn btn-default">Setting</button>
-                                  </form>
+                                  <input type="button" class="btn btn-default" onclick="location.href='/device/{{device.id|int}}/app/{{local_app.id|int}}'"value="Setting">
                                 </th>
                                 <th>
-                                  <form method="POST" action="/device/{{device.id}}/app/{{local_app.id}}/datastore/">
-                                    <button type="submit" class="btn btn-default">Datastore</button>
-                                  </form>
+                                  <input type="button" class="btn btn-default" onclick="location.href='/device/{{device.id|int}}/app/{{local_app.id|int}}/datastore'"value="Datastore">
                                 </th>
                               {% endif %}
                             {% endfor %}
@@ -42,9 +38,7 @@
                   </tbody>
                 </table>
                 <p>
-                  <form method="POST" action="/device/{{device.id}}/store">
-                    <button type="submit" class="btn btn-default">Add</button>
-                  </form>
+                  <input type="button" class="btn btn-default" onclick="location.href='/device/{{device.id|int}}/store'"value="Add">
                 </p>
               </th>
             </tr>

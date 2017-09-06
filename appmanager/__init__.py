@@ -4,6 +4,7 @@ from typing import Any
 import logging
 
 DB_COLLECTION_LOCALAPPS = 'local_apps'
+DB_COLLECTION_GLOBALAPPS = 'global_apps'
 
 class AppManager:
   __instance = None
@@ -49,13 +50,22 @@ class AppManager:
     
 
   def list_globalapps(self) -> list:
-    pass
+    db = self.__databasehelper.get_database(self.__dbname)
+    col = self.__databasehelper.get_collection(db, DB_COLLECTION_GLOBALAPPS)
+    listapps = list(self.__databasehelper.find(col, {}))
+    return listapps
 
   def find_globalapp_info(self, globalapp_id) -> dict:
-    pass
+    db = self.__databasehelper.get_database(self.__dbname)
+    col = self.__databasehelper.get_collection(db, DB_COLLECTION_GLOBALAPPS)
+    appinfo = list(self.__databasehelper.find(col, {'id': globalapp_id}))
+    return appinfo[0]
   
   def find_localapp_info(self, localapp_id: int) -> dict:
-    pass
+    db = self.__databasehelper.get_database(self.__dbname)
+    col = self.__databasehelper.get_collection(db, DB_COLLECTION_LOCALAPPS)
+    appinfo = list(self.__databasehelper.find(col, {'id': localapp_id}))
+    return appinfo[0]
   
   def find_localapp_id_from_name(self, name: str) -> int:
     db = self.__databasehelper.get_database(self.__dbname)
