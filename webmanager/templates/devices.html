@@ -18,15 +18,13 @@
             <tr>
               <th>{{device.name}}</th>
               <th>
-              {% for appid in device.local_apps %}
-                {% if local_apps %}
-                  {% for local_app in local_apps %}
-                    {% if appid|int == local_app.id|int %}
-                      {{local_app.name}}
-                    {% endif %}
-                  {% endfor %}
-                {% endif %}
-              {% endfor %}
+              {% if local_apps %}
+                {% for local_app in local_apps %}
+                  {% if device.id|int == local_app.device_id|int %}
+                    {{local_app.name}}
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
               </th>
               <th>{{device.note}}</th>
               <th>
@@ -38,6 +36,9 @@
           {% endfor %}
         </tbody>
       </table>
+      <form method="POST" action="/device/new/">
+        <button type="submit" class="btn btn-default">New</button>
+      </form>
     </div>
   </div>
 </div>

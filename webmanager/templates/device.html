@@ -3,26 +3,33 @@
 <div class="container">
   <div class="row">
     <div class="col-md-12">
-      {% if device %}
-      <h1>Device "{{device.name}}"</h1>
+      {% if isnew %}
+        <h1>New Device</h1>
+        <form method="POST" action="/device/new/save/">
+      {% else %}
+        <h1>Device {{device.name}}"</h1>
+        <form method="POST" action="/device/{{device.id|int}}/save/">
       {% endif %}
-      <form method="POST" action="/device/{{device.id|int}}/save/">
         <table class="table">
           <tbody>
             <tr>
               <th>name</th>
-              <th><input type="text" class="form-control" id="exampleInput" name="name" value="{{device.name}}"></th>
+              {% if isnew %}
+                <th><input type="text" class="form-control" id="exampleInput" name="name" value=""></th>
+              {% else %}
+                <th><input type="text" class="form-control" id="exampleInput" name="name" value="{{device.name}}"></th>
+              {% endif %}
             </tr>
-            <tr>
-              <th>apps</th>
-              <th>
-                <table class="table table-bordered">
-                  <tbody>
-                      <tr>
-                        {% for appid in device.local_apps %}
-                          {% if local_apps %}
-                            {% for local_app in local_apps %}
-                              {% if appid|int == local_app.id|int %}
+            {% if not isnew %}
+              <tr>
+                  <th>apps</th>
+                  <th>
+                    <table class="table table-bordered">
+                      <tbody>
+                        {% if local_apps %}
+                          {% for local_app in local_apps %}
+                            {% if device.id|int == local_app.device_id|int %}
+                              <tr>
                                 <th>{{local_app.name}}</th>
                                 <th>
                                   <input type="button" class="btn btn-default" onclick="location.href='/device/{{device.id|int}}/app/{{local_app.id|int}}'"value="Setting">
@@ -30,21 +37,25 @@
                                 <th>
                                   <input type="button" class="btn btn-default" onclick="location.href='/device/{{device.id|int}}/app/{{local_app.id|int}}/datastore'"value="Datastore">
                                 </th>
-                              {% endif %}
-                            {% endfor %}
-                          {% endif %}
-                        {% endfor %}
-                      </tr>
-                  </tbody>
-                </table>
-                <p>
-                  <input type="button" class="btn btn-default" onclick="location.href='/device/{{device.id|int}}/store'"value="Add">
-                </p>
-              </th>
-            </tr>
+                              </tr>
+                            {% endif %}
+                          {% endfor %}
+                        {% endif %}
+                      </tbody>
+                    </table>
+                  <p>
+                    <input type="button" class="btn btn-default" onclick="location.href='/device/{{device.id|int}}/store'"value="Add">
+                  </p>
+                </th>
+              </tr>
+            {% endif %}
             <tr>
               <th>notes</th>
-              <th><input type="text" class="form-control" id="exampleInput" name="notes" value="{{device.notes}}"></th>
+              {% if isnew %}
+                <th><input type="text" class="form-control" id="exampleInput" name="note" value=""></th>
+              {% else %}
+                <th><input type="text" class="form-control" id="exampleInput" name="note" value="{{device.note}}"></th>
+              {% endif %}
             </tr>
           </tbody>
         </table>

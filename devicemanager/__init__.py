@@ -27,3 +27,19 @@ class DeviceManager:
     col = self.__dbhelper.get_collection(db, DB_COLLECTION_DEVICES)
     listdevices = list(self.__dbhelper.find(col, {'id': device_id}))
     return listdevices[0]
+
+  def add(self, configs: dict) -> dict:
+    db = self.__dbhelper.get_database(self.__dbname)
+    col = self.__dbhelper.get_collection(db, DB_COLLECTION_DEVICES)
+    configs['id'] = self.__dbhelper.nextseq(col)
+    result = self.__dbhelper.insert(col, configs)
+    return result
+
+  def update(self, device_id: int, configs: dict):
+    db = self.__dbhelper.get_database(self.__dbname)
+    col = self.__dbhelper.get_collection(db, DB_COLLECTION_DEVICES)
+    result = self.__dbhelper.update(col, {"id": device_id}, configs)
+    return result
+
+  def delete(self, device_id: int):
+    pass

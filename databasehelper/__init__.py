@@ -19,13 +19,17 @@ class DataBaseHelper:
     return collection.insert_one(doc)
 
   def find(self, collection, filter):
-    return self.collection.find(filter)
+    return collection.find(filter)
 
   def update(self, collection, filter, update):
-    return self.collection.update_one(filter, update)
+    return collection.update_one(filter, {'$set': update})
 
   def delete(self, collection, filter):
-    return self.collection.delete_one(filter)
+    return collection.delete_one(filter)
 
   def drop(self, collection):
     return collection.drop()
+
+  def nextseq(self, collection):
+    num = collection.count()
+    return num

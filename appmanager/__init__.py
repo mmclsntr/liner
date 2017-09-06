@@ -47,7 +47,6 @@ class AppManager:
     col = self.__databasehelper.get_collection(db, DB_COLLECTION_LOCALAPPS)
     listapps = list(self.__databasehelper.find(col, {}))
     return listapps
-    
 
   def list_globalapps(self) -> list:
     db = self.__databasehelper.get_database(self.__dbname)
@@ -66,6 +65,12 @@ class AppManager:
     col = self.__databasehelper.get_collection(db, DB_COLLECTION_LOCALAPPS)
     appinfo = list(self.__databasehelper.find(col, {'id': localapp_id}))
     return appinfo[0]
+
+  def find_localapp_info_with_deviceid(self, device_id: int) -> dict:
+    db = self.__databasehelper.get_database(self.__dbname)
+    col = self.__databasehelper.get_collection(db, DB_COLLECTION_LOCALAPPS)
+    appinfo = list(self.__databasehelper.find(col, {'device_id': device_id}))
+    return appinfo[0]
   
   def find_localapp_id_from_name(self, name: str) -> int:
     db = self.__databasehelper.get_database(self.__dbname)
@@ -81,13 +86,27 @@ class AppManager:
     localapp_name = listapps[0]['name']
     return localapp_name
 
-  def add(self, globalapp_id: int, config: dict) -> dict:
-    pass
+  def add(self, globalapp_id: int, configs: dict) -> dict:
+    # Add info
+    db = self.__databasehelper.get_database(self.__dbname)
+    col = self.__databasehelper.get_collection(db, DB_COLLECTION_LOCALAPPS)
+    configs['id'] = self.__databasehelper.nextseq(col)
+    result = self.__databasehelper.insert(col, configs)
+    # Add app file
+    # TODO
+    return result
 
   def delete(self, localapp_id: int) -> bool:
     pass
 
-  def edit_app_info(self, localapp_id: int) -> bool:
+  def update_app_info(self, localapp_id: int, configs: dict) -> bool:
+    # Add info
+    db = self.__databasehelper.get_database(self.__dbname)
+    col = self.__databasehelper.get_collection(db, DB_COLLECTION_LOCALAPPS)
+    result = self.__databasehelper.update(col, {'id': localapp_id}, configs)
+    # Add app file
+    # TODO
+    return result
     pass
 
   def read_app_value(self, localapp_id: int) -> Any:

@@ -3,6 +3,7 @@ globalapps = [
   id: 0,
   name: 'gpio',
   note: '',
+  module_name: 'gpiomanager',
   required_configs: [
     {
       name: 'pin_num',
@@ -14,6 +15,7 @@ globalapps = [
   id: 1,
   name: 'socket',
   note: '',
+  module_name: 'socketmanager',
   required_configs: [
     {
       name: 'address',
@@ -78,13 +80,11 @@ devices = [
   {
     id: 0,
     name: 'led1',
-    local_apps: [0],
     note: ''
   },
   {
     id: 1,
     name: 'led2',
-    local_apps: [1],
     note: ''
   }
 ]
@@ -98,6 +98,8 @@ shellPrint(result);
 
 rules = [
 {
+  id: 0,
+  name: 'gpio23 on with 24',
   event: {
     nodename: 'gpio23', 
     operator: '==', 
@@ -111,6 +113,8 @@ rules = [
   ]
 },
 {
+  id: 1,
+  name: 'gpio23 off with 24',
   event: {
     nodename: 'gpio23', 
     operator: '==', 
@@ -130,4 +134,25 @@ db.rules.drop();
 db.createCollection('rules');
 db.rules.insert(rules);
 result = db.rules.find();
+shellPrint(result);
+
+seq = [
+{
+  _id: 'deviceid',
+  seq: 0
+},
+{
+  _id: 'localappid',
+  seq: 1
+},
+{
+  _id: 'globalappid',
+  seq: 0
+}
+]
+
+db.counters.drop();
+db.createCollection('counters');
+db.counters.insert(seq);
+result = db.counters.find();
 shellPrint(result);

@@ -4,12 +4,49 @@
   <div class="container">
     <div class="row">
       <div class="col-md-12">
-        <p class="lead">
-          <a href='/devices'>Device Setting</a>
-        </p>
-        <p class="lead">
-          <a href='/connectors'>Connector Setting</a>
-        </p>
+      <h1>Rulebase Connectors</h1>
+      {% for connector in connectors %}
+        <h3>
+          id: {{connector.id}}<br>
+          name: {{connector.name}}
+        </h3>
+        <b>event</b>
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>node name</th>
+              <th>operator</th>
+              <th>value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th>{{connector.event.nodename}}</th>
+              <th>{{connector.event.operator}}</th>
+              <th>{{connector.event.value}}</th>
+            </tr>
+          </tbody>
+        </table>
+
+        <b>actions</b>
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>node name</th>
+              <th>value</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for action in connector.actions %}
+              <tr>
+                <th>{{action.nodename}}</th>
+                <th>{{action.value}}</th>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table></p>
+      {% endfor %}
+      <p><button type="button" class="btn btn-default" onclick="history.back()">Back</button></p>
       </div>
     </div>
   </div>
