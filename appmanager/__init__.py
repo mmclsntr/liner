@@ -5,6 +5,9 @@ import logging
 import os
 import shutil
 
+from apps.node import Node
+from datastoremanager import DataStoreManager
+
 DB_COLLECTION_LOCALAPPS = 'local_apps'
 DB_COLLECTION_GLOBALAPPS = 'global_apps'
 DIR_APP_STORE = 'appstore'
@@ -18,27 +21,42 @@ class AppManager:
       cls.__instance = object.__new__(cls)
     return cls.__instance
 
-  def __init__(self, dbname: str):
+  def __init__(self):
     logging.basicConfig(level=logging.DEBUG)
-    self.__dbname = dbname
     self.__databasehelper = databasehelper.DataBaseHelper()
-    self.__apps = self.__load_localapps()
+    self.__datastoremanager = DataStoreManager('dev')
 
-  def __load_localapps(self) -> dict:
-    apps = {}
+  def set_dbname(self, dbname: str):
+    self.__dbname = dbname
+
+  def load_localapps(self) -> dict:
+    self.__apps = {}
     listapps = self.list_localapps()
-    _debug_listapps = ""
     for listapp in listapps:
-      app_module = importlib.import_module('apps.' + listapp['module_name'])
-      # Rearrenge configs
-      configs = {}
-      for config in listapp['configs']:
-        configs[config['name']] = eval(config['type'])(config['value'])
-      #print(configs)
-      apps[int(listapp['id'])] = app_module.NodeAppMain(configs)
-      _debug_listapps += "\n" + str(listapp)
-    logging.debug('local apps: ' + _debug_listapps)
-    return apps
+      self.__load_localapp(int(listapp['id']))
+
+  def __load_localapp(self, localapp_id):
+    listapp = self.find_localapp_info(localapp_id)
+    app_module = importlib.import_module('apps.' + listapp['module_name'])
+    # Rearrenge configs
+    configs = {}
+    for config in listapp['configs']:
+      configs[config['name']] = eval(config['type'])(config['value'])
+    #print(configs)
+    app = app_module.NodeAppMain(configs)
+    self.__apps[int(localapp_id)] = app
+    self.__datastoremanager.run_datastorer(localapp_id, listapp['name'], app)
+    logging.debug('load local app: ' + str(listapp))
+
+  def unload_localapps(self):
+    listapps = self.list_localapps()
+    for listapp in listapps:
+      self.__unload_localapp(int(listapp['id']))
+    
+  def __unload_localapp(self, localapp_id):
+    self.__apps[int(localapp_id)] = None
+    self.__datastoremanager.kill_datastorer(localapp_id)
+    logging.debug('unload local app: ' + str(listapp))
 
   def get_localapps(self) -> dict:
     return self.__apps
@@ -99,6 +117,7 @@ class AppManager:
     configs['module_name'] = globalapp_info['module_name']
     configs['global_app_id'] = globalapp_id
     result = self.__databasehelper.insert(col, configs)
+    self.__load_localapp(configs['id'])
     # Add app file
     # TODO: Nest version for app store on cloud
     return result
@@ -107,6 +126,7 @@ class AppManager:
     db = self.__databasehelper.get_database(self.__dbname)
     col = self.__databasehelper.get_collection(db, DB_COLLECTION_LOCALAPPS)
     result = self.__databasehelper.delete(col, {'id': localapp_id})
+    self.__unload_localapp(localapp_id)
     return True
 
   def update_app_info(self, localapp_id: int, configs: dict) -> bool:
@@ -114,6 +134,7 @@ class AppManager:
     db = self.__databasehelper.get_database(self.__dbname)
     col = self.__databasehelper.get_collection(db, DB_COLLECTION_LOCALAPPS)
     result = self.__databasehelper.update(col, {'id': localapp_id}, configs)
+    self.__load_localapp(localapp_id)
     # Add app file
     # TODO: Nest version for app store on cloud
     return True

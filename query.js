@@ -3,7 +3,7 @@ globalapps = [
   id: 0,
   name: 'gpio',
   note: '',
-  module_name: 'gpiomanager',
+  module_name: 'gpiodigital',
   required_configs: [
     {
       name: 'pin_num',
@@ -15,7 +15,7 @@ globalapps = [
   id: 1,
   name: 'socket',
   note: '',
-  module_name: 'socketmanager',
+  module_name: 'socket',
   required_configs: [
     {
       name: 'address',
@@ -40,7 +40,7 @@ localapps = [
 {
   id: 0,
   name: 'gpio23',
-  module_name: 'gpiomanager',
+  module_name: 'gpiodigital',
   global_app_id: 0,
   device_id: 0,
   note: '',
@@ -55,7 +55,7 @@ localapps = [
 {
   id: 1,
   name: 'gpio24',
-  module_name: 'gpiomanager',
+  module_name: 'gpiodigital',
   global_app_id: 0,
   device_id: 1,
   note: '',

@@ -1,6 +1,5 @@
-from datastoremanager import DataStoreManager
-from rulebaseconnectormanager import RuleBaseConnectorManager
 from appmanager import AppManager
+from rulebaseconnectormanager import RuleBaseConnectorManager
 from devicemanager import DeviceManager
 from webmanager import WebManager
 
@@ -17,21 +16,18 @@ class CentralManager:
     return cls.__instance
 
   def __init__(self):
-    self.__appmanager = AppManager('dev')
-    #apps = appmanager.get_localapps()
-    #for app in apps.values():
-    #  print(app)
+    self.__appmanager = AppManager()
+    self.__appmanager.set_dbname('dev')
     self.__devicemanager = DeviceManager(self.__appmanager, 'dev')
-    self.__datastoremanager = DataStoreManager(self.__appmanager, 'dev')
     self.__rulebaseconnectormanager = RuleBaseConnectorManager(self.__appmanager, 'dev')
     self.__webmanager = WebManager('dev')
 
   def run(self):
-    self.__datastoremanager.run()
+    self.__appmanager.load_localapps()
     time.sleep(3)
     self.__rulebaseconnectormanager.run()
     self.__webmanager.run(True)
 
   def destroy(self):
-    self.__datastoremanager.killall()
+    self.__appmanager.unload_localapps()
     self.__rulebaseconnectormanager.kill()

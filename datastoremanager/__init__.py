@@ -1,5 +1,4 @@
 from datastorethread import DataStoreThread
-from appmanager import AppManager
 
 class DataStoreManager:
   __instance = None
@@ -9,18 +8,18 @@ class DataStoreManager:
       cls.__instance = object.__new__(cls)
     return cls.__instance
   
-  def __init__(self, app_manager: AppManager, dbname: str):
-    self.__app_manager = app_manager
+  def __init__(self, dbname: str):
     self.data_stores = {}
     self.__dbname = dbname
 
-  def run(self):
-    listapps = self.__app_manager.list_localapps()
-    for listapp in listapps:
-      _id = listapp['id']
-      datastorethread = DataStoreThread(self.__app_manager, _id, 1.0, self.__dbname)
-      datastorethread.start()
-      self.data_stores[_id] = datastorethread
+  def run_datastorer(self, node_id, name, node):
+    datastorethread = DataStoreThread(node, name, 1.0, self.__dbname)
+    datastorethread.start()
+    self.data_stores[node_id] = datastorethread
+  
+  def kill_datastorer(self, node_id):
+    self.data_stores[node_id].kill()
+    self.data_stores[node_id] = None
 
   def killall(self):
     for datastore in self.data_stores.values():

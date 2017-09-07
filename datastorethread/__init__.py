@@ -1,23 +1,23 @@
 import databasehelper
 import threading
 import time
-from appmanager import AppManager
+from apps.node import Node
 
 class DataStoreThread(threading.Thread):
-  def __init__(self, appmanager: AppManager, app_id: int,  interval: float, dbname: str):
+  def __init__(self, node: Node, name: str,  interval: float, dbname: str):
     super(DataStoreThread, self).__init__()
     self.interval = interval
-    self.__app_id = app_id
     self.__dbname = dbname
     self.__databasehelper = databasehelper.DataBaseHelper()
-    self.__appmanager = appmanager
+    self.__node = node
+    self.__name = name
 
   def __store(self):
     db = self.__databasehelper.get_database(self.__dbname)
-    appname = self.__appmanager.find_localapp_name_from_id(self.__app_id)
+    appname = self.__name
     col = self.__databasehelper.get_collection(db, appname)
     while self.__isrunning:
-      readVal = self.__appmanager.read_app_value(self.__app_id)
+      readVal = self.__node.read()
       #print(readVal)
       doc = {'time': time.time(), 'value': readVal}
       self.__databasehelper.insert(col, doc)
