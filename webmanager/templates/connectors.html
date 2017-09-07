@@ -5,11 +5,12 @@
     <div class="row">
       <div class="col-md-12">
       <h1>Rulebase Connectors</h1>
+      <input type="button" class="btn btn-default" onclick="location.href='/connector/new/'"value="Add">
       {% for connector in connectors %}
-        <h3>
-          id: {{connector.id}}<br>
+        <h4>
+          id: {{connector.id|int}}<br>
           name: {{connector.name}}
-        </h3>
+        </h4>
         <b>event</b>
         <table class="table table-bordered">
           <thead>
@@ -44,7 +45,11 @@
               </tr>
             {% endfor %}
           </tbody>
-        </table></p>
+        </table>
+        <form method="POST" action="/connector/{{connector.id|int}}">
+          <button type="submit" class="btn btn-default">Setting</button>
+        </form>
+      </p>
       {% endfor %}
       <p><button type="button" class="btn btn-default" onclick="history.back()">Back</button></p>
       </div>

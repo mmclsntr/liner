@@ -2,6 +2,9 @@ from datastoremanager import DataStoreManager
 from rulebaseconnectormanager import RuleBaseConnectorManager
 from appmanager import AppManager
 from devicemanager import DeviceManager
+from webmanager import WebManager
+
+import time
 
 DB_NAME = 'dev'
 
@@ -18,9 +21,16 @@ class CentralManager:
     #apps = appmanager.get_localapps()
     #for app in apps.values():
     #  print(app)
-    self.__devicemanager = DevicdeManager(self.__appmanager, 'dev')
+    self.__devicemanager = DeviceManager(self.__appmanager, 'dev')
     self.__datastoremanager = DataStoreManager(self.__appmanager, 'dev')
     self.__rulebaseconnectormanager = RuleBaseConnectorManager(self.__appmanager, 'dev')
+    self.__webmanager = WebManager('dev')
+
+  def run(self):
+    self.__datastoremanager.run()
+    time.sleep(3)
+    self.__rulebaseconnectormanager.run()
+    self.__webmanager.run(True)
 
   def destroy(self):
     self.__datastoremanager.killall()

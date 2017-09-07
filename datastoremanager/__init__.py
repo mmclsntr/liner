@@ -12,10 +12,13 @@ class DataStoreManager:
   def __init__(self, app_manager: AppManager, dbname: str):
     self.__app_manager = app_manager
     self.data_stores = {}
-    listapps = app_manager.list_localapps()
+    self.__dbname = dbname
+
+  def run(self):
+    listapps = self.__app_manager.list_localapps()
     for listapp in listapps:
       _id = listapp['id']
-      datastorethread = DataStoreThread(app_manager, _id, 1.0, dbname)
+      datastorethread = DataStoreThread(self.__app_manager, _id, 1.0, self.__dbname)
       datastorethread.start()
       self.data_stores[_id] = datastorethread
 

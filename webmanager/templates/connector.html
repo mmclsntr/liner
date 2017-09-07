@@ -1,0 +1,86 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="form">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+      <h1>Rulebase Connector</h1>
+        <p>
+          {% if not isnew %}
+            <form method="POST" action="/connector/{{connector.id|int}}/save/">
+          {% else %}
+            <form method="POST" action="/connector/new/save/">
+          {% endif %}
+          <table class="table">
+            <tbody>
+              <tr>
+                <th>id</th>
+                <th>{% if not isnew %} {{connector.id|int}} {% endif %}</th>
+              </tr>
+              <tr>
+                <th>name</th>
+                <th><input type="text" class="form-control" id="exampleInput" name="name" {% if not isnew %} value="{{connector.name}}" {% endif %}></th>
+              </tr>
+            </tbody>
+          </table>
+          <b>event</b>
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>node name</th>
+                <th>operator</th>
+                <th>value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th><input type="text" class="form-control" id="exampleInput" name="event:nodename" {% if not isnew %} value="{{connector.event.nodename}}" {% endif %}></th>
+                <th><input type="text" class="form-control" id="exampleInput" name="event:operator" {% if not isnew %} value="{{connector.event.operator}}" {% endif %}></th>
+                <th><input type="text" class="form-control" id="exampleInput" name="event:value" {% if not isnew %} value="{{connector.event.value}}" {% endif %}></th>
+              </tr>
+            </tbody>
+          </table>
+
+          <b>actions</b>
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>node name</th>
+                <th>value</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% if not isnew %}
+                {% for action in connector.actions %}
+                  <tr>
+                    <th><input type="text" class="form-control" id="exampleInput" name="action:nodename[]" {% if not isnew %} value="{{action.nodename}}" {% endif %}></th>
+                    <th><input type="text" class="form-control" id="exampleInput" name="action:value[]" {% if not isnew %} value="{{action.value}}" {% endif %}></th>
+                  </tr>
+                {% endfor %}
+              {% endif %}
+              <tr>
+                <th><input type="text" class="form-control" id="exampleInput" name="action:nodename[]"></th>
+                <th><input type="text" class="form-control" id="exampleInput" name="action:value[]"></th>
+              </tr>
+              <tr>
+                <th><input type="text" class="form-control" id="exampleInput" name="action:nodename[]"></th>
+                <th><input type="text" class="form-control" id="exampleInput" name="action:value[]"></th>
+              </tr>
+              <tr>
+                <th><input type="text" class="form-control" id="exampleInput" name="action:nodename[]"></th>
+                <th><input type="text" class="form-control" id="exampleInput" name="action:value[]"></th>
+              </tr>
+            </tbody>
+          </table>
+          <button type="submit" class="btn btn-default">Save</button>
+        </form>
+      </p>
+      {% if not isnew %}
+        <input type="button" class="btn btn-default" onclick="location.href='/connector/{{connector.id}}/delete/'"value="Delete">
+      {% endif %}
+      <p><button type="button" class="btn btn-default" onclick="history.back()">Back</button></p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

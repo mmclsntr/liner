@@ -2,9 +2,13 @@ import importlib
 import databasehelper
 from typing import Any
 import logging
+import os
+import shutil
 
 DB_COLLECTION_LOCALAPPS = 'local_apps'
 DB_COLLECTION_GLOBALAPPS = 'global_apps'
+DIR_APP_STORE = 'appstore'
+DIR_APPS = 'apps'
 
 class AppManager:
   __instance = None
@@ -91,13 +95,19 @@ class AppManager:
     db = self.__databasehelper.get_database(self.__dbname)
     col = self.__databasehelper.get_collection(db, DB_COLLECTION_LOCALAPPS)
     configs['id'] = self.__databasehelper.nextseq(col)
+    globalapp_info = self.find_globalapp_info(globalapp_id)
+    configs['module_name'] = globalapp_info['module_name']
+    configs['global_app_id'] = globalapp_id
     result = self.__databasehelper.insert(col, configs)
     # Add app file
-    # TODO
+    # TODO: Nest version for app store on cloud
     return result
 
   def delete(self, localapp_id: int) -> bool:
-    pass
+    db = self.__databasehelper.get_database(self.__dbname)
+    col = self.__databasehelper.get_collection(db, DB_COLLECTION_LOCALAPPS)
+    result = self.__databasehelper.delete(col, {'id': localapp_id})
+    return True
 
   def update_app_info(self, localapp_id: int, configs: dict) -> bool:
     # Add info
@@ -105,9 +115,8 @@ class AppManager:
     col = self.__databasehelper.get_collection(db, DB_COLLECTION_LOCALAPPS)
     result = self.__databasehelper.update(col, {'id': localapp_id}, configs)
     # Add app file
-    # TODO
-    return result
-    pass
+    # TODO: Nest version for app store on cloud
+    return True
 
   def read_app_value(self, localapp_id: int) -> Any:
     readvalue = self.__apps[localapp_id].read()

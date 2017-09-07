@@ -31,5 +31,6 @@ class DataBaseHelper:
     return collection.drop()
 
   def nextseq(self, collection):
-    num = collection.count()
-    return num
+    result = collection.aggregate([{ "$group": { "_id":  0, "max_id": { "$max": "$id" } } }])
+    num = list(result)[0]['max_id']
+    return num + 1

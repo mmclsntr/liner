@@ -3,6 +3,7 @@ import sys
 import signal
 
 centralmanager = CentralManager()
+centralmanager.run()
 
 def handler(signal, frame):
   centralmanager.destroy()

@@ -42,4 +42,6 @@ class DeviceManager:
     return result
 
   def delete(self, device_id: int):
-    pass
+    db = self.__dbhelper.get_database(self.__dbname)
+    col = self.__dbhelper.get_collection(db, DB_COLLECTION_DEVICES)
+    result = self.__dbhelper.delete(col, {"id": device_id})
