@@ -21,7 +21,6 @@ class NodeAppMain(Node):
 class SocketManager:
   def __init__(self, address, port):
     self.__address = (address, port)
-    print(self.__address)
 
   def read(self):
     self.__client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

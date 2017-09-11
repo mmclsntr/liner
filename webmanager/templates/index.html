@@ -1,15 +1,15 @@
 {% extends "layout.html" %}
 {% block content %}
-{% if title %}
-  <h1>{{ title }}</h1>
-{% else %}
-  <h1>Bootstrap 101 Template</h1>
-{% endif %}
 <div class="form">
   <div class="container">
     <div class="row">
       <div class="col-md-12">
         <p class="lead">
+          {% if title %}
+            <h1>{{ title }}</h1>
+          {% else %}
+            <h1>Bootstrap 101 Template</h1>
+          {% endif %}
           <a href='/device/list'>Device Setting</a>
         </p>
         <p class="lead">

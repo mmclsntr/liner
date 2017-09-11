@@ -52,11 +52,12 @@ class AppManager:
     listapps = self.list_localapps()
     for listapp in listapps:
       self.__unload_localapp(int(listapp['id']))
-    
+
   def __unload_localapp(self, localapp_id):
     self.__apps[int(localapp_id)] = None
+    del self.__apps[int(localapp_id)]
     self.__datastoremanager.kill_datastorer(localapp_id)
-    logging.debug('unload local app: ' + str(listapp))
+    logging.debug('unload local app: ' + str(localapp_id))
 
   def get_localapps(self) -> dict:
     return self.__apps

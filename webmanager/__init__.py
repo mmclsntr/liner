@@ -248,6 +248,6 @@ class ConnectorView(FlaskView):
   def set_dbname(cls, dbname):
     cls.dbname = dbname
 
-if __name__ == '__main__':
-  webmanager = WebManager('dev')
-  webmanager.run(True)
+#if __name__ == '__main__':
+#  webmanager = WebManager('dev')
+#  webmanager.run(True)

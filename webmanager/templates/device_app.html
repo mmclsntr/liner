@@ -72,7 +72,9 @@
       {% if islocal %}
         <input type="button" class="btn btn-default" onclick="location.href='/device/{{deviceid|int}}/app/{{app.id|int}}/delete/'"value="Delete">
       {% endif %}
-      <p><button type="button" class="btn btn-default" onclick="history.back()">Back</button></p>
+      <p><input type="button" class="btn btn-default" onclick="location.href='/device/{{deviceid|int}}'"value="Delete Setting"></p>
+      <p><input type="button" class="btn btn-default" onclick="location.href='/device/list/'"value="Delete List"></p>
+      <p><input type="button" class="btn btn-default" onclick="location.href='/'"value="Top"></p>
     </div>
   </div>
 </div>

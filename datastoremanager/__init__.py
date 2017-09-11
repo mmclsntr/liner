@@ -20,8 +20,8 @@ class DataStoreManager:
   def kill_datastorer(self, node_id):
     self.data_stores[node_id].kill()
     self.data_stores[node_id] = None
+    del self.data_stores[node_id]
 
   def killall(self):
     for datastore in self.data_stores.values():
       datastore.kill()
-

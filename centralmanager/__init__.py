@@ -24,8 +24,11 @@ class CentralManager:
 
   def run(self):
     self.__appmanager.load_localapps()
+    print('Locaded apps')
     time.sleep(3)
+    print('rulebase')
     self.__rulebaseconnectormanager.run()
+    print('webmanager')
     self.__webmanager.run(True)
 
   def destroy(self):

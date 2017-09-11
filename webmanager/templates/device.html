@@ -64,7 +64,8 @@
       {% if not isnew %}
         <input type="button" class="btn btn-default" onclick="location.href='/device/{{device.id|int}}/delete/'"value="Delete">
       {% endif %}
-      <p><button type="button" class="btn btn-default" onclick="history.back()">Back</button></p>
+      <p><input type="button" class="btn btn-default" onclick="location.href='/device/list/'"value="Device List"></p>
+      <p><input type="button" class="btn btn-default" onclick="location.href='/'"value="Top"></p>
     </div>
   </div>
 </div>
