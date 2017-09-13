@@ -1,8 +1,7 @@
-from centralmanager import CentralManager
+import centralmanager
 import sys
 import signal
 
-centralmanager = CentralManager()
 centralmanager.run()
 
 def handler(signal, frame):

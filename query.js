@@ -1,6 +1,6 @@
 globalapps = [
 {
-  id: 0,
+  id: NumberInt(0),
   name: 'gpio',
   note: '',
   module_name: 'gpiodigital',
@@ -12,7 +12,7 @@ globalapps = [
   ]
 },
 {
-  id: 1,
+  id: NumberInt(1),
   name: 'socket',
   note: '',
   module_name: 'socket',
@@ -38,32 +38,32 @@ shellPrint(result);
 
 localapps = [
 {
-  id: 0,
+  id: NumberInt(0),
   name: 'gpio23',
   module_name: 'gpiodigital',
-  global_app_id: 0,
-  device_id: 0,
+  global_app_id: NumberInt(0),
+  device_id: NumberInt(0),
   note: '',
   configs: [
     {
       name: 'pin_num',
       type: 'int',
-      value: 23
+      value: NumberInt(23)
     }
   ]
 },
 {
-  id: 1,
+  id: NumberInt(1),
   name: 'gpio24',
   module_name: 'gpiodigital',
-  global_app_id: 0,
-  device_id: 1,
+  global_app_id: NumberInt(0),
+  device_id: NumberInt(1),
   note: '',
   configs: [
     {
       name: 'pin_num',
       type: 'int',
-      value: 24
+      value: NumberInt(24)
     }
   ]
 }
@@ -78,12 +78,12 @@ shellPrint(result);
 
 devices = [
   {
-    id: 0,
+    id: NumberInt(0),
     name: 'led1',
     note: ''
   },
   {
-    id: 1,
+    id: NumberInt(1),
     name: 'led2',
     note: ''
   }
@@ -98,16 +98,16 @@ shellPrint(result);
 
 rules = [
 {
-  id: 0,
+  id: NumberInt(0),
   name: 'gpio23 on with 24',
   event: {
-    nodename: 'gpio23', 
+    nodeid: NumberInt(0), 
     operator: '==', 
     value: 1
   }, 
   actions: [
     {
-      nodename: 'gpio24', 
+      nodeid: NumberInt(1), 
       value: 1
     }
   ]
@@ -116,13 +116,13 @@ rules = [
   id: 1,
   name: 'gpio23 off with 24',
   event: {
-    nodename: 'gpio23', 
+    nodeid: 0, 
     operator: '==', 
     value: 0
   }, 
   actions: [
     {
-      nodename: 'gpio24', 
+      nodeid: 0, 
       value: 0
     }
   ]
@@ -134,25 +134,4 @@ db.rules.drop();
 db.createCollection('rules');
 db.rules.insert(rules);
 result = db.rules.find();
-shellPrint(result);
-
-seq = [
-{
-  _id: 'deviceid',
-  seq: 0
-},
-{
-  _id: 'localappid',
-  seq: 1
-},
-{
-  _id: 'globalappid',
-  seq: 0
-}
-]
-
-db.counters.drop();
-db.createCollection('counters');
-db.counters.insert(seq);
-result = db.counters.find();
 shellPrint(result);

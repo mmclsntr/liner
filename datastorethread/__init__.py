@@ -3,24 +3,26 @@ import threading
 import time
 from apps.node import Node
 
+import configmanager
+
+DB_NAME = configmanager.get_key('DATABASE', 'DatabaseName')
+DB_COLLECTION_TEMP_DATASTORE = configmanager.get_key('DATABASE', 'DataStoreCollectionTemp')
+
 class DataStoreThread(threading.Thread):
-  def __init__(self, node: Node, name: str,  interval: float, dbname: str):
+  def __init__(self, node: Node, node_id,  interval: float):
     super(DataStoreThread, self).__init__()
     self.interval = interval
-    self.__dbname = dbname
-    self.__databasehelper = databasehelper.DataBaseHelper()
     self.__node = node
-    self.__name = name
+    self.__id = node_id
 
   def __store(self):
-    db = self.__databasehelper.get_database(self.__dbname)
-    appname = self.__name
-    col = self.__databasehelper.get_collection(db, appname)
+    db = databasehelper.get_database(DB_NAME)
+    col = databasehelper.get_collection(db, DB_COLLECTION_TEMP_DATASTORE + str(self.__id))
     while self.__isrunning:
       readVal = self.__node.read()
       #print(readVal)
       doc = {'time': time.time(), 'value': readVal}
-      self.__databasehelper.insert(col, doc)
+      databasehelper.insert(col, doc)
       time.sleep(self.interval)
 
   def run(self):

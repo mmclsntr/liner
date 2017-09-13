@@ -1,36 +1,36 @@
 import pymongo
+import configmanager
 
-class DataBaseHelper:
-  __addr = 'localhost'
-  __port = 27017
-  def __init__(self):
-    self.__client = pymongo.MongoClient(self.__addr, self.__port)
+__addr = configmanager.get_key('DATABASE', 'DatabaseAddr')
+__port = int(configmanager.get_key('DATABASE', 'DatabasePort'))
 
-  def get_database(self, name: str) -> pymongo.database:
-    self.database = self.__client[name]
-    return self.database
+__client = pymongo.MongoClient(__addr, __port)
 
-  def get_collection(self, database, name: str) -> pymongo.collection:
-    self.collection = database[name]
-    #database.command({"convertToCapped": name, "size": 1024 * 1024})
-    return self.collection
+def get_database(name: str) -> pymongo.database:
+  database = __client[name]
+  return database
 
-  def insert(self, collection, doc):
-    return collection.insert_one(doc)
+def get_collection(database, name: str) -> pymongo.collection:
+  collection = database[name]
+  #database.command({"convertToCapped": name, "size": 1024 * 1024})
+  return collection
 
-  def find(self, collection, filter):
-    return collection.find(filter)
+def insert(collection, doc):
+  return collection.insert_one(doc)
 
-  def update(self, collection, filter, update):
-    return collection.update_one(filter, {'$set': update})
+def find(collection, filter):
+  return collection.find(filter)
 
-  def delete(self, collection, filter):
-    return collection.delete_one(filter)
+def update(collection, filter, update):
+  return collection.update_one(filter, {'$set': update})
 
-  def drop(self, collection):
-    return collection.drop()
+def delete(collection, filter):
+  return collection.delete_one(filter)
 
-  def nextseq(self, collection):
-    result = collection.aggregate([{ "$group": { "_id":  0, "max_id": { "$max": "$id" } } }])
-    num = list(result)[0]['max_id']
-    return num + 1
+def drop(collection):
+  return collection.drop()
+
+def nextseq(collection):
+  result = collection.aggregate([{ "$group": { "_id":  0, "max_id": { "$max": "$id" } } }])
+  num = list(result)[0]['max_id']
+  return num + 1

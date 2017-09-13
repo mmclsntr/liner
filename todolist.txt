@@ -1,0 +1,18 @@
+[AppManager]
+- Read value from app specified by id.
+- Write value from app specified by id.
+- Add new app
+- Update the cofigs of app specified by id.
+- Delete apps specified by id.
+- Load localapps and run datastorer
+- Unload localapps and kill datastorer
+- List localapps
+- List globalapps
+- Find configs of localapps specified by id.
+- Find configs of globalapps specified by id.
+
+[DeviceManager]
+
+[DataStoreManager]
+
+[RuleBaseConnectorManager]
