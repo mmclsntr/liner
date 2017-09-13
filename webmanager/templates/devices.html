@@ -20,7 +20,7 @@
               <th>
               {% if local_apps %}
                 {% for local_app in local_apps %}
-                  {% if device.id|int == local_app.device_id|int %}
+                  {% if device._id|string == local_app.device_id %}
                     {{local_app.name}}
                   {% endif %}
                 {% endfor %}
@@ -28,7 +28,7 @@
               </th>
               <th>{{device.note}}</th>
               <th>
-                <form method="POST" action="/device/{{device.id|int}}">
+                <form method="POST" action="/device/{{device._id|string}}">
                   <button type="submit" class="btn btn-default">Setting</button>
                 </form>
               </th>

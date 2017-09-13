@@ -31,7 +31,7 @@ class DeviceView(FlaskView):
   route_base = '/device'
   dbname = ''
 
-  @route('/<int:deviceid>', methods=['GET', 'POST'])
+  @route('/<deviceid>', methods=['GET', 'POST'])
   def get(self, deviceid):
     deviceinfo = devicemanager.find_device_info(deviceid)
     applist = appmanager.list_localapps()
@@ -49,7 +49,7 @@ class DeviceView(FlaskView):
     applist = appmanager.list_localapps()
     return render_template('devices.html', devices=devicelist, local_apps=applist)
 
-  @route('/<int:deviceid>/save/', methods=['POST'])
+  @route('/<deviceid>/save/', methods=['POST'])
   def device_save(self, deviceid):
     info = {}
     info['name'] = request.form['name']
@@ -65,20 +65,20 @@ class DeviceView(FlaskView):
     devicemanager.add(info)
     return redirect(url_for('DeviceView:list'))
   
-  @route('/<int:deviceid>/delete/', methods=['GET', 'POST'])
+  @route('/<deviceid>/delete/', methods=['GET', 'POST'])
   def device_delete(self, deviceid):
     devicemanager.delete(deviceid)
     return redirect(url_for('DeviceView:list'))
   
-  @route('/<int:deviceid>/app/<int:localappid>', methods=['GET', 'POST'])
+  @route('/<deviceid>/app/<localappid>', methods=['GET', 'POST'])
   def localapp(self, deviceid, localappid):
     appinfo = appmanager.find_localapp_info(localappid)
     return render_template('device_app.html', islocal=True, app=appinfo, deviceid=deviceid)
 
-  @route('/<int:deviceid>/app/<int:localappid>/save/', methods=['POST'])
+  @route('/<deviceid>/app/<localappid>/save/', methods=['POST'])
   def localapp_save(self, deviceid, localappid):
     localappinfo = appmanager.find_localapp_info(localappid)
-    globalappinfo = appmanager.find_globalapp_info(int(localappinfo['global_app_id']))
+    globalappinfo = appmanager.find_globalapp_info(localappinfo['global_app_id'])
     info = {}
     info['name'] = request.form['name']
     info['note'] = request.form['note']
@@ -94,22 +94,22 @@ class DeviceView(FlaskView):
     appmanager.update_app_info(localappid, info)
     return redirect(url_for('DeviceView:get', deviceid=deviceid))
 
-  @route('/<int:deviceid>/app/<int:localappid>/delete/', methods=['GET', 'POST'])
+  @route('/<deviceid>/app/<localappid>/delete/', methods=['GET', 'POST'])
   def localapp_delete(self, deviceid, localappid):
     appmanager.delete(localappid)
     return redirect(url_for('DeviceView:get', deviceid=deviceid))
 
-  @route('/<int:deviceid>/store/', methods=['GET', 'POST'])
+  @route('/<deviceid>/store/', methods=['GET', 'POST'])
   def store(self, deviceid):
     applist = appmanager.list_globalapps()
     return render_template('store.html', deviceid=deviceid, apps=applist)
 
-  @route('/<int:deviceid>/store/<int:globalappid>', methods=['GET', 'POST'])
+  @route('/<deviceid>/store/<globalappid>', methods=['GET', 'POST'])
   def globalapp(self, deviceid, globalappid):
     appinfo = appmanager.find_globalapp_info(globalappid)
     return render_template('device_app.html', islocal=False, app=appinfo, deviceid=deviceid)
   
-  @route('/<int:deviceid>/store/<int:globalappid>/save/', methods=['POST'])
+  @route('/<deviceid>/store/<globalappid>/save/', methods=['POST'])
   def globalapp_save(self, deviceid, globalappid):
     globalappinfo = appmanager.find_globalapp_info(globalappid)
     info = {}
@@ -131,7 +131,7 @@ class DeviceView(FlaskView):
     return redirect(url_for('DeviceView:get', deviceid=deviceid))
   
 
-  @route('/<int:deviceid>/app/<int:localappid>/datastore/', methods=['GET', 'POST'])
+  @route('/<deviceid>/app/<localappid>/datastore/', methods=['GET', 'POST'])
   def datastore(self, deviceid, localappid):
     return render_template('device_datastore.html')
 
@@ -141,12 +141,12 @@ class ConnectorView(FlaskView):
   route_base = '/connector'
   dbname = ''
 
-  @route('/<int:connectorid>', methods=['GET', 'POST'])
+  @route('/<connectorid>', methods=['GET', 'POST'])
   def get(self, connectorid):
     rule = rulebaseconnectormanager.find_rule(connectorid)
     return render_template('connector.html', isnew=False, connector=rule)
 
-  @route('/<int:connectorid>/save/', methods=['GET', 'POST'])
+  @route('/<connectorid>/save/', methods=['GET', 'POST'])
   def connector_save(self, connectorid):
     configs = {}
     configs['name'] = request.form['name']
@@ -172,7 +172,7 @@ class ConnectorView(FlaskView):
     rulebaseconnectormanager.update(connectorid, configs)
     return redirect(url_for('ConnectorView:list'))
 
-  @route('/<int:connectorid>/delete/', methods=['GET', 'POST'])
+  @route('/<connectorid>/delete/', methods=['GET', 'POST'])
   def connector_delete(self, connectorid):
     rulebaseconnectormanager.delete(connectorid)
     return redirect(url_for('ConnectorView:list'))

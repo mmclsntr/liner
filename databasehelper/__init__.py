@@ -29,8 +29,3 @@ def delete(collection, filter):
 
 def drop(collection):
   return collection.drop()
-
-def nextseq(collection):
-  result = collection.aggregate([{ "$group": { "_id":  0, "max_id": { "$max": "$id" } } }])
-  num = list(result)[0]['max_id']
-  return num + 1

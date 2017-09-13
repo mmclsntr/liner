@@ -8,7 +8,7 @@
         <form method="POST" action="/device/new/save/">
       {% else %}
         <h1>Device {{device.name}}"</h1>
-        <form method="POST" action="/device/{{device.id|int}}/save/">
+        <form method="POST" action="/device/{{device._id|string}}/save/">
       {% endif %}
         <table class="table">
           <tbody>
@@ -28,14 +28,14 @@
                       <tbody>
                         {% if local_apps %}
                           {% for local_app in local_apps %}
-                            {% if device.id|int == local_app.device_id|int %}
+                            {% if device._id|string == local_app.device_id %}
                               <tr>
                                 <th>{{local_app.name}}</th>
                                 <th>
-                                  <input type="button" class="btn btn-default" onclick="location.href='/device/{{device.id|int}}/app/{{local_app.id|int}}'"value="Setting">
+                                  <input type="button" class="btn btn-default" onclick="location.href='/device/{{device._id|string}}/app/{{local_app._id|string}}'"value="Setting">
                                 </th>
                                 <th>
-                                  <input type="button" class="btn btn-default" onclick="location.href='/device/{{device.id|int}}/app/{{local_app.id|int}}/datastore'"value="Datastore">
+                                  <input type="button" class="btn btn-default" onclick="location.href='/device/{{device._id|string}}/app/{{local_app._id|string}}/datastore'"value="Datastore">
                                 </th>
                               </tr>
                             {% endif %}
@@ -44,7 +44,7 @@
                       </tbody>
                     </table>
                   <p>
-                    <input type="button" class="btn btn-default" onclick="location.href='/device/{{device.id|int}}/store'"value="Add">
+                    <input type="button" class="btn btn-default" onclick="location.href='/device/{{device._id|string}}/store'"value="Add">
                   </p>
                 </th>
               </tr>
@@ -62,7 +62,7 @@
         <p><button type="submit" class="btn btn-default">Save</button></p>
       </form>
       {% if not isnew %}
-        <input type="button" class="btn btn-default" onclick="location.href='/device/{{device.id|int}}/delete/'"value="Delete">
+        <input type="button" class="btn btn-default" onclick="location.href='/device/{{device._id|string}}/delete/'"value="Delete">
       {% endif %}
       <p><input type="button" class="btn btn-default" onclick="location.href='/device/list/'"value="Device List"></p>
       <p><input type="button" class="btn btn-default" onclick="location.href='/'"value="Top"></p>

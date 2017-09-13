@@ -2,7 +2,7 @@ from datastorethread import DataStoreThread
   
 data_stores = {}
 
-def run_datastorer(node_id, name, node):
+def run_datastorer(node_id, node):
   datastorethread = DataStoreThread(node, node_id, 1.0)
   datastorethread.start()
   data_stores[node_id] = datastorethread

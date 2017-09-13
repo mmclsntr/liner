@@ -33,7 +33,7 @@ class RuleBaseConnectorThread(threading.Thread):
 
       for connection in connections:
         event = connection['event']
-        eventnodecol = dbhelper.get_collection(db, DB_COLLECTION_TEMP_DATASTORE + str(int(event['nodeid'])))
+        eventnodecol = dbhelper.get_collection(db, DB_COLLECTION_TEMP_DATASTORE + str(event['nodeid']))
         eventnodevalues = dbhelper.find(eventnodecol, {})
         # Sort with time by desc
         desceventnodevalues = sorted(eventnodevalues, key=lambda x:x['time'], reverse=True)
@@ -52,7 +52,7 @@ class RuleBaseConnectorThread(threading.Thread):
           actions = connection['actions']
           for action in actions:
             app_id = action['nodeid']
-            app_manager.write_app_value(int(app_id), action['value'])
+            app_manager.write_app_value(app_id, action['value'])
 
       time.sleep(self.interval)
 
@@ -78,7 +78,7 @@ def kill():
 def find_rule(connector_id: int):
   db = dbhelper.get_database(DB_NAME)
   col = dbhelper.get_collection(db, DB_COLLECTION_RULES)
-  rule = dbhelper.find(col, {'id': connector_id})
+  rule = dbhelper.find(col, {'_id': connector_id})
   return rule[0]
 
 def list_rules():
@@ -90,15 +90,14 @@ def list_rules():
 def add(configs: dict):
   db = dbhelper.get_database(DB_NAME)
   col = dbhelper.get_collection(db, DB_COLLECTION_RULES)
-  configs['id'] = dbhelper.nextseq(col)
   dbhelper.insert(col, configs)
 
-def update(connector_id: int, configs: dict):
+def update(connector_id, configs: dict):
   db = dbhelper.get_database(DB_NAME)
   col = dbhelper.get_collection(db, DB_COLLECTION_RULES)
-  dbhelper.update(col, {'id': connector_id}, configs)
+  dbhelper.update(col, {'_id': connector_id}, configs)
 
 def delete(connector_id):
   db = dbhelper.get_database(DB_NAME)
   col = dbhelper.get_collection(db, DB_COLLECTION_RULES)
-  dbhelper.delete(col, {'id': connector_id})
+  dbhelper.delete(col, {'_id': connector_id})

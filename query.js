@@ -1,6 +1,5 @@
 globalapps = [
 {
-  id: NumberInt(0),
   name: 'gpio',
   note: '',
   module_name: 'gpiodigital',
@@ -12,7 +11,6 @@ globalapps = [
   ]
 },
 {
-  id: NumberInt(1),
   name: 'socket',
   note: '',
   module_name: 'socket',
@@ -35,14 +33,36 @@ db.global_apps.insert(globalapps);
 result = db.global_apps.find();
 shellPrint(result);
 
+global_id = db.global_apps.find({name: 'gpio'})[0]._id.valueOf();
+
+
+devices = [
+  {
+    name: 'led1',
+    note: ''
+  },
+  {
+    name: 'led2',
+    note: ''
+  }
+]
+
+
+db.devices.drop();
+db.createCollection('devices');
+db.devices.insert(devices);
+result = db.devices.find();
+shellPrint(result);
+
+led1_id = db.devices.find({name: 'led1'})[0]._id.valueOf();
+led2_id = db.devices.find({name: 'led2'})[0]._id.valueOf();
 
 localapps = [
 {
-  id: NumberInt(0),
   name: 'gpio23',
   module_name: 'gpiodigital',
-  global_app_id: NumberInt(0),
-  device_id: NumberInt(0),
+  global_app_id: global_id,
+  device_id: led1_id,
   note: '',
   configs: [
     {
@@ -53,11 +73,10 @@ localapps = [
   ]
 },
 {
-  id: NumberInt(1),
   name: 'gpio24',
   module_name: 'gpiodigital',
-  global_app_id: NumberInt(0),
-  device_id: NumberInt(1),
+  global_app_id: global_id,
+  device_id: led2_id,
   note: '',
   configs: [
     {
@@ -75,54 +94,35 @@ db.local_apps.insert(localapps);
 result = db.local_apps.find();
 shellPrint(result);
 
+gpio23_id = db.local_apps.find({name: 'gpio23'})[0]._id.valueOf();
+gpio24_id = db.local_apps.find({name: 'gpio24'})[0]._id.valueOf();
 
-devices = [
-  {
-    id: NumberInt(0),
-    name: 'led1',
-    note: ''
-  },
-  {
-    id: NumberInt(1),
-    name: 'led2',
-    note: ''
-  }
-]
-
-
-db.devices.drop();
-db.createCollection('devices');
-db.devices.insert(devices);
-result = db.devices.find();
-shellPrint(result);
 
 rules = [
 {
-  id: NumberInt(0),
   name: 'gpio23 on with 24',
   event: {
-    nodeid: NumberInt(0), 
+    nodeid: gpio23_id, 
     operator: '==', 
     value: 1
   }, 
   actions: [
     {
-      nodeid: NumberInt(1), 
+      nodeid: gpio24_id, 
       value: 1
     }
   ]
 },
 {
-  id: 1,
   name: 'gpio23 off with 24',
   event: {
-    nodeid: 0, 
+    nodeid: gpio23_id, 
     operator: '==', 
     value: 0
   }, 
   actions: [
     {
-      nodeid: 0, 
+      nodeid: gpio24_id, 
       value: 0
     }
   ]

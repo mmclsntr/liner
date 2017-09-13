@@ -7,7 +7,7 @@
       <h1>Rulebase Connector</h1>
         <p>
           {% if not isnew %}
-            <form method="POST" action="/connector/{{connector.id|int}}/save/">
+            <form method="POST" action="/connector/{{connector._id|string}}/save/">
           {% else %}
             <form method="POST" action="/connector/new/save/">
           {% endif %}
@@ -15,7 +15,7 @@
             <tbody>
               <tr>
                 <th>id</th>
-                <th>{% if not isnew %} {{connector.id|int}} {% endif %}</th>
+                <th>{% if not isnew %} {{connector._id|string}} {% endif %}</th>
               </tr>
               <tr>
                 <th>name</th>
@@ -34,7 +34,7 @@
             </thead>
             <tbody>
               <tr>
-                <th><input type="text" class="form-control" id="exampleInput" name="event:nodename" {% if not isnew %} value="{{connector.event.nodename}}" {% endif %}></th>
+                <th><input type="text" class="form-control" id="exampleInput" name="event:nodeid" {% if not isnew %} value="{{connector.event.nodeid}}" {% endif %}></th>
                 <th><input type="text" class="form-control" id="exampleInput" name="event:operator" {% if not isnew %} value="{{connector.event.operator}}" {% endif %}></th>
                 <th><input type="text" class="form-control" id="exampleInput" name="event:value" {% if not isnew %} value="{{connector.event.value}}" {% endif %}></th>
               </tr>
@@ -53,21 +53,21 @@
               {% if not isnew %}
                 {% for action in connector.actions %}
                   <tr>
-                    <th><input type="text" class="form-control" id="exampleInput" name="action:nodename[]" {% if not isnew %} value="{{action.nodename}}" {% endif %}></th>
+                    <th><input type="text" class="form-control" id="exampleInput" name="action:nodeid[]" {% if not isnew %} value="{{action.nodeid}}" {% endif %}></th>
                     <th><input type="text" class="form-control" id="exampleInput" name="action:value[]" {% if not isnew %} value="{{action.value}}" {% endif %}></th>
                   </tr>
                 {% endfor %}
               {% endif %}
               <tr>
-                <th><input type="text" class="form-control" id="exampleInput" name="action:nodename[]"></th>
+                <th><input type="text" class="form-control" id="exampleInput" name="action:nodeid[]"></th>
                 <th><input type="text" class="form-control" id="exampleInput" name="action:value[]"></th>
               </tr>
               <tr>
-                <th><input type="text" class="form-control" id="exampleInput" name="action:nodename[]"></th>
+                <th><input type="text" class="form-control" id="exampleInput" name="action:nodeid[]"></th>
                 <th><input type="text" class="form-control" id="exampleInput" name="action:value[]"></th>
               </tr>
               <tr>
-                <th><input type="text" class="form-control" id="exampleInput" name="action:nodename[]"></th>
+                <th><input type="text" class="form-control" id="exampleInput" name="action:nodeid[]"></th>
                 <th><input type="text" class="form-control" id="exampleInput" name="action:value[]"></th>
               </tr>
             </tbody>
@@ -76,7 +76,7 @@
         </form>
       </p>
       {% if not isnew %}
-        <input type="button" class="btn btn-default" onclick="location.href='/connector/{{connector.id}}/delete/'"value="Delete">
+        <input type="button" class="btn btn-default" onclick="location.href='/connector/{{connector._id|string}}/delete/'"value="Delete">
       {% endif %}
       <p><input type="button" class="btn btn-default" onclick="location.href='/connector/list'"value="Connector List"></p>
       <p><input type="button" class="btn btn-default" onclick="location.href='/'"value="Top"></p>

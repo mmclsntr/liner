@@ -8,7 +8,7 @@
       <input type="button" class="btn btn-default" onclick="location.href='/connector/new/'"value="Add">
       {% for connector in connectors %}
         <h4>
-          id: {{connector.id|int}}<br>
+          id: {{connector._id|string}}<br>
           name: {{connector.name}}
         </h4>
         <b>event</b>
@@ -22,7 +22,7 @@
           </thead>
           <tbody>
             <tr>
-              <th>{{connector.event.nodename}}</th>
+              <th>{{connector.event.nodeid}}</th>
               <th>{{connector.event.operator}}</th>
               <th>{{connector.event.value}}</th>
             </tr>
@@ -40,13 +40,13 @@
           <tbody>
             {% for action in connector.actions %}
               <tr>
-                <th>{{action.nodename}}</th>
+                <th>{{action.nodeid}}</th>
                 <th>{{action.value}}</th>
               </tr>
             {% endfor %}
           </tbody>
         </table>
-        <form method="POST" action="/connector/{{connector.id|int}}">
+        <form method="POST" action="/connector/{{connector._id|string}}">
           <button type="submit" class="btn btn-default">Setting</button>
         </form>
       </p>

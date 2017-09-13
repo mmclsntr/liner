@@ -5,17 +5,17 @@
     <div class="col-md-12">
       {% if islocal %}
         <h1>App</h1>
-        <form method="POST" action="/device/{{deviceid|int}}/app/{{app.id|int}}/save/">
+        <form method="POST" action="/device/{{deviceid|string}}/app/{{app._id|string}}/save/">
       {% else %}
         <h1>New App</h1>
-        <form method="POST" action="/device/{{deviceid|int}}/store/{{app.id|int}}/save/">
+        <form method="POST" action="/device/{{deviceid|string}}/store/{{app._id|string}}/save/">
       {% endif %}
         <table class="table">
           <tbody>
             {% if islocal %}
               <tr>
                 <th>id</th>
-                <th>{{app.id|int}}</th>
+                <th>{{app._id|string}}</th>
               </tr>
             {% else %}
               <tr>
@@ -26,9 +26,9 @@
             <tr>
               <th>store id</th>
               {% if islocal %}
-                <th>{{app.global_app_id|int}}</th>
+                <th>{{app.global_app_id|string}}</th>
               {% else %}
-                <th>{{app.id}}</th>
+                <th>{{app._id|string}}</th>
               {% endif %}
             </tr>
             <tr>
@@ -70,9 +70,9 @@
         <p><button type="submit" class="btn btn-default">Save</button></p>
       </form>
       {% if islocal %}
-        <input type="button" class="btn btn-default" onclick="location.href='/device/{{deviceid|int}}/app/{{app.id|int}}/delete/'"value="Delete">
+        <input type="button" class="btn btn-default" onclick="location.href='/device/{{deviceid}}/app/{{app._id|string}}/delete/'"value="Delete">
       {% endif %}
-      <p><input type="button" class="btn btn-default" onclick="location.href='/device/{{deviceid|int}}'"value="Delete Setting"></p>
+      <p><input type="button" class="btn btn-default" onclick="location.href='/device/{{deviceid}}'"value="Delete Setting"></p>
       <p><input type="button" class="btn btn-default" onclick="location.href='/device/list/'"value="Delete List"></p>
       <p><input type="button" class="btn btn-default" onclick="location.href='/'"value="Top"></p>
     </div>
