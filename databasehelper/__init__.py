@@ -21,6 +21,9 @@ def insert(collection, doc):
 def find(collection, filter):
   return collection.find(filter)
 
+def find_with_params(collection, filter, params):
+  return collection.find(filter, **params)
+
 def update(collection, filter, update):
   return collection.update_one(filter, {'$set': update})
 

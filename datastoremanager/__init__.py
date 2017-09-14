@@ -1,9 +1,11 @@
 from datastorethread import DataStoreThread
-  
+import configmanager
+
 data_stores = {}
+INTERVAL = float(configmanager.get_key('INTERVALS', 'DatastoreInterval'))
 
 def run_datastorer(node_id, node):
-  datastorethread = DataStoreThread(node, node_id, 1.0)
+  datastorethread = DataStoreThread(node, node_id, INTERVAL)
   datastorethread.start()
   data_stores[node_id] = datastorethread
 

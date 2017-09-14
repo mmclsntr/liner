@@ -4,10 +4,12 @@ import appmanager
 import threading
 import time
 import logging
+import pymongo
 
 DB_NAME = configmanager.get_key('DATABASE', 'DatabaseName')
 DB_COLLECTION_RULES = configmanager.get_key('DATABASE', 'RulesCollection')
 DB_COLLECTION_TEMP_DATASTORE = configmanager.get_key('DATABASE', 'DataStoreCollectionTemp')
+INTERVAL = float(configmanager.get_key('INTERVALS', 'RulebaseInterval'))
  
 class RuleBaseConnectorThread(threading.Thread):
   __instance = None
@@ -34,9 +36,9 @@ class RuleBaseConnectorThread(threading.Thread):
       for connection in connections:
         event = connection['event']
         eventnodecol = dbhelper.get_collection(db, DB_COLLECTION_TEMP_DATASTORE + str(event['nodeid']))
-        eventnodevalues = dbhelper.find(eventnodecol, {})
+        eventnodevalues = dbhelper.find_with_params(eventnodecol, {}, dict(sort=[('time', pymongo.DESCENDING)], limit=2))
         # Sort with time by desc
-        desceventnodevalues = sorted(eventnodevalues, key=lambda x:x['time'], reverse=True)
+        desceventnodevalues = eventnodevalues
 
         firstvalue = str(desceventnodevalues[0]['value'])
         secondvalue = str(desceventnodevalues[1]['value'])
@@ -52,7 +54,7 @@ class RuleBaseConnectorThread(threading.Thread):
           actions = connection['actions']
           for action in actions:
             app_id = action['nodeid']
-            app_manager.write_app_value(app_id, action['value'])
+            appmanager.write_app_value(app_id, action['value'])
 
       time.sleep(self.interval)
 
@@ -67,7 +69,7 @@ class RuleBaseConnectorThread(threading.Thread):
 
 
 
-__nodeconnectorthread = RuleBaseConnectorThread(0.5)
+__nodeconnectorthread = RuleBaseConnectorThread(INTERVAL)
 
 def run():
   __nodeconnectorthread.start()

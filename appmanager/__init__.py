@@ -22,7 +22,7 @@ __apps = {}
 def load_localapps():
   listapps = list_localapps()
   for listapp in listapps:
-    __load_localapp(listapp['_id'])
+    __load_localapp(str(listapp['_id']))
 
 def __load_localapp(localapp_id):
   listapp = find_localapp_info(localapp_id)
@@ -40,7 +40,7 @@ def __load_localapp(localapp_id):
 def unload_localapps():
   listapps = list_localapps()
   for listapp in listapps:
-    __unload_localapp(listapp['_id'])
+    __unload_localapp(str(listapp['_id']))
 
 def __unload_localapp(localapp_id):
   __apps[localapp_id] = None
