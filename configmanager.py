@@ -5,13 +5,13 @@ INI_FILE = 'config.ini'
 __config = configparser.SafeConfigParser()
 __config.read(INI_FILE, encoding='utf8')
 
-def get_section(section):
+def get_section(section: str) -> str:
   return __config.options(section)
 
-def get_key(section, key):
+def get_key(section: str, key: str) -> str:
   return __config.get(section, key)
 
-def set_value(section, key, value):
+def set_value(section, key, value) -> None:
   __config.set(section, key, value)
   return
 

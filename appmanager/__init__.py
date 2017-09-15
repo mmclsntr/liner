@@ -1,5 +1,4 @@
 import importlib
-from typing import Any
 import logging
 import os
 import shutil
@@ -24,7 +23,7 @@ def load_localapps():
   for listapp in listapps:
     __load_localapp(str(listapp['_id']))
 
-def __load_localapp(localapp_id):
+def __load_localapp(localapp_id: str):
   listapp = find_localapp_info(localapp_id)
   app_module = importlib.import_module('apps.' + listapp['module_name'])
   # Rearrenge configs
@@ -42,7 +41,7 @@ def unload_localapps():
   for listapp in listapps:
     __unload_localapp(str(listapp['_id']))
 
-def __unload_localapp(localapp_id):
+def __unload_localapp(localapp_id: str):
   __apps[localapp_id] = None
   del __apps[localapp_id]
   datastoremanager.kill_datastorer(localapp_id)
@@ -60,57 +59,49 @@ def list_globalapps() -> list:
   listapps = list(databasehelper.find(col, {}))
   return listapps
 
+def find_localapp_info(localapp_id: str) -> dict:
+  db = databasehelper.get_database(DB_NAME)
+  col = databasehelper.get_collection(db, DB_COLLECTION_LOCALAPPS)
+  appinfo = list(databasehelper.find(col, {'_id': ObjectId(localapp_id)}))
+  return appinfo[0]
+
 def find_globalapp_info(globalapp_id: str) -> dict:
   db = databasehelper.get_database(DB_NAME)
   col = databasehelper.get_collection(db, DB_COLLECTION_GLOBALAPPS)
   appinfo = list(databasehelper.find(col, {'_id': ObjectId(globalapp_id)}))
   return appinfo[0]
 
-def find_localapp_info(localapp_id) -> dict:
-  db = databasehelper.get_database(DB_NAME)
-  col = databasehelper.get_collection(db, DB_COLLECTION_LOCALAPPS)
-  appinfo = list(databasehelper.find(col, {'_id': ObjectId(localapp_id)}))
-  return appinfo[0]
-
-def find_localapp_info_with_deviceid(device_id: int) -> dict:
-  db = databasehelper.get_database(DB_NAME)
-  col = databasehelper.get_collection(db, DB_COLLECTION_LOCALAPPS)
-  appinfo = list(databasehelper.find(col, {'device_id': device_id}))
-  return appinfo[0]
-
-def add(globalapp_id: str, configs: dict) -> dict:
+def add(globalapp_id: str, new_app: dict) -> None:
   # Add info
   db = databasehelper.get_database(DB_NAME)
   col = databasehelper.get_collection(db, DB_COLLECTION_LOCALAPPS)
   globalapp_info = find_globalapp_info(globalapp_id)
   configs['module_name'] = globalapp_info['module_name']
   configs['global_app_id'] = globalapp_id
-  result = databasehelper.insert(col, configs)
+  result = databasehelper.insert(col, new_app)
   __load_localapp(str(configs['_id']))
   # Add app file
   # TODO: Nest version for app store on cloud
-  return result
 
-def delete(localapp_id) -> bool:
+def delete(localapp_id: str) -> None:
   db = databasehelper.get_database(DB_NAME)
   col = databasehelper.get_collection(db, DB_COLLECTION_LOCALAPPS)
   result = databasehelper.delete(col, {'_id': ObjectId(localapp_id)})
   __unload_localapp(localapp_id)
   return True
 
-def update_app_info(localapp_id, configs: dict) -> bool:
+def update_app_info(localapp_id: str, updated_app: dict) -> None:
   # Add info
   db = databasehelper.get_database(DB_NAME)
   col = databasehelper.get_collection(db, DB_COLLECTION_LOCALAPPS)
-  result = databasehelper.update(col, {'id': ObjectId(localapp_id)}, configs)
+  result = databasehelper.update(col, {'id': ObjectId(localapp_id)}, updated_app)
   __load_localapp(localapp_id)
   # Add app file
   # TODO: Nest version for app store on cloud
-  return True
 
-def read_app_value(localapp_id) -> Any:
+def read_app_value(localapp_id: str):
   readvalue = __apps[localapp_id].read()
   return readvalue
 
-def write_app_value(localapp_id, value: Any) -> Any:
+def write_app_value(localapp_id: str, value) -> None:
   __apps[localapp_id].write(value)

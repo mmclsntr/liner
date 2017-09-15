@@ -5,6 +5,7 @@ import threading
 import time
 import logging
 import pymongo
+from bson.objectid import ObjectId
 
 DB_NAME = configmanager.get_key('DATABASE', 'DatabaseName')
 DB_COLLECTION_RULES = configmanager.get_key('DATABASE', 'RulesCollection')
@@ -19,15 +20,12 @@ class RuleBaseConnectorThread(threading.Thread):
       cls.__instance = object.__new__(cls)
     return cls.__instance
 
-  def __init__(self, interval):
+  def __init__(self) -> None:
     super(RuleBaseConnectorThread, self).__init__()
     logging.basicConfig(level=logging.DEBUG)
-    self.interval = interval
+    self.interval = INTERVAL
 
-  def setNodesDict(self, nodes: dict):
-    self.nodes = nodes
-
-  def __connectnodes(self):
+  def __connectnodes(self) -> None:
     db = dbhelper.get_database(DB_NAME)
     while self.__isrunning:
       connectionscol = dbhelper.get_collection(db, DB_COLLECTION_RULES)
@@ -36,7 +34,7 @@ class RuleBaseConnectorThread(threading.Thread):
       for connection in connections:
         event = connection['event']
         eventnodecol = dbhelper.get_collection(db, DB_COLLECTION_TEMP_DATASTORE + str(event['nodeid']))
-        eventnodevalues = dbhelper.find_with_params(eventnodecol, {}, dict(sort=[('time', pymongo.DESCENDING)], limit=2))
+        eventnodevalues = dbhelper.find(eventnodecol, {}, dict(sort=[('time', pymongo.DESCENDING)], limit=2))
         # Sort with time by desc
         desceventnodevalues = eventnodevalues
 
@@ -58,48 +56,46 @@ class RuleBaseConnectorThread(threading.Thread):
 
       time.sleep(self.interval)
 
-  def run(self):
+  def run(self) -> None:
     self.__isrunning = True
     self.__connectnodes()
 
-  def kill(self):
+  def kill(self) -> None:
     self.__isrunning = False
 
 
 
+rulebase_thread = RuleBaseConnectorThread()
 
+def run() -> None:
+  rulebase_thread.start()
 
-__nodeconnectorthread = RuleBaseConnectorThread(INTERVAL)
+def kill() -> None:
+  rulebase_thread.kill()
 
-def run():
-  __nodeconnectorthread.start()
-
-def kill():
-  __nodeconnectorthread.kill()
-
-def find_rule(connector_id: int):
+def find_rule(connector_id: str) -> dict:
   db = dbhelper.get_database(DB_NAME)
   col = dbhelper.get_collection(db, DB_COLLECTION_RULES)
-  rule = dbhelper.find(col, {'_id': connector_id})
+  rule = dbhelper.find(col, {'_id': ObjectId(connector_id)})
   return rule[0]
 
-def list_rules():
+def list_rules() -> list:
   db = dbhelper.get_database(DB_NAME)
   col = dbhelper.get_collection(db, DB_COLLECTION_RULES)
   listrules = list(dbhelper.find(col, {}))
   return listrules
 
-def add(configs: dict):
+def add(new_rule: dict) -> None:
   db = dbhelper.get_database(DB_NAME)
   col = dbhelper.get_collection(db, DB_COLLECTION_RULES)
-  dbhelper.insert(col, configs)
+  dbhelper.insert(col, new_rule)
 
-def update(connector_id, configs: dict):
+def update(connector_id: str, updated_rule: dict) -> None:
   db = dbhelper.get_database(DB_NAME)
   col = dbhelper.get_collection(db, DB_COLLECTION_RULES)
-  dbhelper.update(col, {'_id': connector_id}, configs)
+  dbhelper.update(col, {'_id': ObjectId(connector_id)}, updated_rule)
 
-def delete(connector_id):
+def delete(connector_id: str) -> None:
   db = dbhelper.get_database(DB_NAME)
   col = dbhelper.get_collection(db, DB_COLLECTION_RULES)
-  dbhelper.delete(col, {'_id': connector_id})
+  dbhelper.delete(col, {'_id': ObjectId(connector_id)})

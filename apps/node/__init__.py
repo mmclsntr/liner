@@ -1,13 +1,9 @@
-from typing import Any
-
 class Node:
-  config = None
-
   def __init__(self):
       pass
   
-  def read(self) -> Any:
+  def read(self):
     pass
 
-  def write(self, value: Any):
+  def write(self, value):
     pass 

@@ -18,11 +18,11 @@ def get_collection(database, name: str) -> pymongo.collection:
 def insert(collection, doc):
   return collection.insert_one(doc)
 
-def find(collection, filter):
-  return collection.find(filter)
-
-def find_with_params(collection, filter, params):
-  return collection.find(filter, **params)
+def find(collection, filter, params = None):
+  if params == None:
+    return collection.find(filter)
+  else:
+    return collection.find(filter, **params)
 
 def update(collection, filter, update):
   return collection.update_one(filter, {'$set': update})
