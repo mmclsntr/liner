@@ -49,10 +49,9 @@ class RuleBaseConnectorThread(threading.Thread):
         # Rule check
         if eval(firstrule) and not eval(secondrule):
           logging.info('ignite: ' + str(connection))
-          actions = connection['actions']
-          for action in actions:
-            app_id = action['nodeid']
-            appmanager.write_app_value(app_id, action['value'])
+          action = connection['action']
+          app_id = action['nodeid']
+          appmanager.write_app_value(app_id, action['value'])
 
       time.sleep(self.interval)
 

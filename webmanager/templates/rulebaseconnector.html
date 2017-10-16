@@ -1,0 +1,142 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<script>
+$(function() {
+  //select change
+  $("select[name='node']").change(function() {
+    $(this).parents('table').find("th#label-value").text("value (" + $(this).children("option[value=" + $(this).val() + "]").attr("valuetype") + ")");
+  });
+});
+</script>
+
+
+<div class="form">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+      <h1>Rulebase Connectors</h1>
+      <input type="button" class="btn btn-default" onclick="location.href='/connector/new/'"value="Add">
+      {% for connector in connectors %}
+        <div id="{{connector._id}}" class="panel panel-default">
+          <div class="panel-body">
+            <h4>
+              id: {{connector._id|string}}<br>
+              name: <input type="text" class="form-control" id="exampleInput" name="name" value="{{connector.name}}">
+            </h4>
+            <b>event</b>
+            <table id="table-event" class="table table-bordered">
+              <thead>
+                <tr>
+                  <th id="label-nodename">node name</th>
+                  <th id="label-operator">operator</th>
+                  <th id="label-value">value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th>
+                    <select name="node">
+                    {% for localapp in localapps %}
+                      <option value="{{localapp._id}}" valuetype="{{localapp.readtype}}">{{localapp.name}}</option>
+
+                      <script>
+                      // set default
+                      $(function () {
+                        var strid = "{{localapp._id}}";
+                        if (strid == "{{connector.event.nodeid}}") {
+                          var table_event = $("div#{{connector._id}}").find("table#table-event");
+                          table_event.find("select[name='node']").val(strid);
+                          var valuetype = table_event.find("select[name='node']").children("option[value=" + strid + "]").attr("valuetype");
+                          table_event.find("th#label-value").text("value (" + valuetype + ")");
+                        }
+                      });
+                      </script>
+                    
+                    {% endfor %}
+                    </select>
+                  </th>
+                  <th>
+                    <select name="operator">
+                      {% set operators = [{}, {}, {}] %}
+                      {% if connector.event.operator == "==" %}
+                        <option value="==" selected>==</option>
+                      {% else %}
+                        <option value="==">==</option>
+                      {% endif %}
+                      {% if connector.event.operator == "<" %}
+                        <option value="<" selected>&lt;</option>
+                      {% else %}
+                        <option value="<">&lt;</option>
+                      {% endif %}
+                      {% if connector.event.operator == ">" %}
+                        <option value=">" selected>&gt;</option>
+                      {% else %}
+                        <option value=">">&gt;</option>
+                      {% endif %}
+                      {% if connector.event.operator == "<=" %}
+                        <option value="<=" selected>&lt;=</option>
+                      {% else %}
+                        <option value="<=">&lt;=</option>
+                      {% endif %}
+                      {% if connector.event.operator == ">=" %}
+                        <option value=">=" selected>&gt;=</option>
+                      {% else %}
+                        <option value=">=">&gt;=</option>
+                      {% endif %}
+                    </select>
+                  </th>
+                  <th><input type="text" class="form-control" id="exampleInput" name="value" value="{{connector.event.value}}"></th>
+                </tr>
+              </tbody>
+            </table>
+
+            <b>action</b>
+            <table id="table-action"  class="table table-bordered">
+              <thead>
+                <tr>
+                  <th id="label-nodename">node name</th>
+                  <th id="label-value">value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th>
+                    <select name="node">
+                    {% for localapp in localapps %}
+                      <option value={{localapp._id}} valuetype="{{localapp.writetype}}">{{localapp.name}}</option>
+                
+                      <script>
+                      // set default
+                      $(function () {
+                        var strid = "{{localapp._id}}";
+                        if (strid == "{{connector.action.nodeid}}") {
+                          var table_action = $("div#{{connector._id}}").find("table#table-action");
+                          table_action.find("select[name='node']").val(strid);
+                          var valuetype = table_action.find("select[name='node']").children("option[value=" + strid + "]").attr("valuetype");
+                          table_action.find("th#label-value").text("value (" + valuetype + ")");
+                        }
+                      });
+                      </script>
+
+                    {% endfor %}
+                    </select>
+                    
+                    
+                  </th>
+                  <th><input type="text" class="form-control" id="exampleInput" name="name" value="{{connector.action.value}}"></th>
+                </tr>
+              </tbody>
+            </table>
+            <form method="POST" action="/connector/{{connector._id|string}}">
+              <button type="submit" class="btn btn-default">Setting</button>
+            </form>
+          </div>
+        </div>
+      {% endfor %}
+      <p><input type="button" class="btn btn-default" onclick="location.href='/'"value="Top"></p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

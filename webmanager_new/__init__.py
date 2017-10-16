@@ -13,7 +13,8 @@ class WebManager:
   app = Flask(__name__)
 
   def __init__(self):
-    pass
+    DeviceView.register(self.app)
+    ConnectorView.register(self.app)
 
   def run(self, debug: bool):
     self.app.debug = debug
@@ -24,54 +25,58 @@ class WebManager:
     title = 'Central Manager'
     return render_template('index.html', title = title)
 
-### Device Setting
+  
+### Device Setting ###
+class DeviceView(FlaskView):
+  route_base = '/device'
+  dbname = ''
 
-  @app.route('/device/<deviceid>', methods=['GET', 'POST'])
-  def device(deviceid):
+  @route('/<deviceid>', methods=['GET', 'POST'])
+  def get(self, deviceid):
     deviceinfo = devicemanager.find_device_info(deviceid)
     applist = appmanager.list_localapps()
     return render_template('device.html', isnew=False, device=deviceinfo, local_apps=applist)
 
-  @app.route('/device/new/', methods=['GET', 'POST'])
-  def device_new():
+  @route('/new/', methods=['GET', 'POST'])
+  def new(self):
     deviceinfo = {}
     applist = appmanager.list_localapps()
     return render_template('device.html', isnew=True, device=deviceinfo, local_apps=applist)
 
-  @app.route('/device/list/', methods=['GET', 'POST'])
-  def device_list():
+  @route('/list/', methods=['GET', 'POST'])
+  def list(self):
     devicelist = devicemanager.list_devices()
     applist = appmanager.list_localapps()
     return render_template('devices.html', devices=devicelist, local_apps=applist)
 
-  @app.route('/device/<deviceid>/save/', methods=['POST'])
-  def device_save(deviceid):
+  @route('/<deviceid>/save/', methods=['POST'])
+  def device_save(self, deviceid):
     info = {}
     info['name'] = request.form['name']
     info['note'] = request.form['note']
     devicemanager.update(deviceid, info)
     return redirect(url_for('DeviceView:list'))
   
-  @app.route('/device//new/save/', methods=['POST'])
-  def device_new_save():
+  @route('/new/save/', methods=['POST'])
+  def device_new_save(self):
     info = {}
     info['name'] = request.form['name']
     info['note'] = request.form['note']
     devicemanager.add(info)
     return redirect(url_for('DeviceView:list'))
   
-  @app.route('/device/<deviceid>/delete/', methods=['GET', 'POST'])
-  def device_delete(deviceid):
+  @route('/<deviceid>/delete/', methods=['GET', 'POST'])
+  def device_delete(self, deviceid):
     devicemanager.delete(deviceid)
     return redirect(url_for('DeviceView:list'))
   
-  @app.route('/device/<deviceid>/app/<localappid>', methods=['GET', 'POST'])
-  def device_localapp(deviceid, localappid):
+  @route('/<deviceid>/app/<localappid>', methods=['GET', 'POST'])
+  def localapp(self, deviceid, localappid):
     appinfo = appmanager.find_localapp_info(localappid)
     return render_template('device_app.html', islocal=True, app=appinfo, deviceid=deviceid)
 
-  @app.route('/device/<deviceid>/app/<localappid>/save/', methods=['POST'])
-  def device_localapp_save(deviceid, localappid):
+  @route('/<deviceid>/app/<localappid>/save/', methods=['POST'])
+  def localapp_save(self, deviceid, localappid):
     localappinfo = appmanager.find_localapp_info(localappid)
     globalappinfo = appmanager.find_globalapp_info(localappinfo['global_app_id'])
     info = {}
@@ -89,23 +94,23 @@ class WebManager:
     appmanager.update_app_info(localappid, info)
     return redirect(url_for('DeviceView:get', deviceid=deviceid))
 
-  @app.route('/device/<deviceid>/app/<localappid>/delete/', methods=['GET', 'POST'])
-  def device_localapp_delete(deviceid, localappid):
+  @route('/<deviceid>/app/<localappid>/delete/', methods=['GET', 'POST'])
+  def localapp_delete(self, deviceid, localappid):
     appmanager.delete(localappid)
     return redirect(url_for('DeviceView:get', deviceid=deviceid))
 
-  @app.route('/device/<deviceid>/store/', methods=['GET', 'POST'])
-  def device_appstore(deviceid):
+  @route('/<deviceid>/store/', methods=['GET', 'POST'])
+  def store(self, deviceid):
     applist = appmanager.list_globalapps()
     return render_template('store.html', deviceid=deviceid, apps=applist)
 
-  @app.route('/device/<deviceid>/store/<globalappid>', methods=['GET', 'POST'])
-  def device_globalapp(deviceid, globalappid):
+  @route('/<deviceid>/store/<globalappid>', methods=['GET', 'POST'])
+  def globalapp(self, deviceid, globalappid):
     appinfo = appmanager.find_globalapp_info(globalappid)
     return render_template('device_app.html', islocal=False, app=appinfo, deviceid=deviceid)
   
-  @app.route('/device/<deviceid>/store/<globalappid>/save/', methods=['POST'])
-  def device_globalapp_save(deviceid, globalappid):
+  @route('/<deviceid>/store/<globalappid>/save/', methods=['POST'])
+  def globalapp_save(self, deviceid, globalappid):
     globalappinfo = appmanager.find_globalapp_info(globalappid)
     info = {}
     info['name'] = request.form['name']
@@ -126,19 +131,23 @@ class WebManager:
     return redirect(url_for('DeviceView:get', deviceid=deviceid))
   
 
-  @app.route('/device/<deviceid>/app/<localappid>/datastore/', methods=['GET', 'POST'])
-  def device_datastore(deviceid, localappid):
+  @route('/<deviceid>/app/<localappid>/datastore/', methods=['GET', 'POST'])
+  def datastore(self, deviceid, localappid):
     return render_template('device_datastore.html')
 
 
 ### Connector Setting ###
-  @app.route('/connector/<connectorid>', methods=['GET', 'POST'])
-  def connector_get(connectorid):
+class ConnectorView(FlaskView):
+  route_base = '/connector'
+  dbname = ''
+
+  @route('/<connectorid>', methods=['GET', 'POST'])
+  def get(self, connectorid):
     rule = rulebaseconnectormanager.find_rule(connectorid)
     return render_template('connector.html', isnew=False, connector=rule)
 
-  @app.route('/connector/<connectorid>/save/', methods=['GET', 'POST'])
-  def connector_save(connectorid):
+  @route('/<connectorid>/save/', methods=['GET', 'POST'])
+  def connector_save(self, connectorid):
     configs = {}
     configs['name'] = request.form['name']
     configs['event'] = {
@@ -163,17 +172,17 @@ class WebManager:
     rulebaseconnectormanager.update(connectorid, configs)
     return redirect(url_for('ConnectorView:list'))
 
-  @app.route('/connector/<connectorid>/delete/', methods=['GET', 'POST'])
-  def connector_delete(connectorid):
+  @route('/<connectorid>/delete/', methods=['GET', 'POST'])
+  def connector_delete(self, connectorid):
     rulebaseconnectormanager.delete(connectorid)
     return redirect(url_for('ConnectorView:list'))
 
-  @app.route('/connector/new/', methods=['GET', 'POST'])
-  def connector_new():
+  @route('/new/', methods=['GET', 'POST'])
+  def new(self):
     return render_template('connector.html', isnew=True)
 
-  @app.route('/connector/new/save/', methods=['GET', 'POST'])
-  def connector_new_save():
+  @route('/new/save/', methods=['GET', 'POST'])
+  def new_save(self):
     configs = {}
     configs['name'] = request.form['name']
     configs['event'] = {
@@ -198,20 +207,10 @@ class WebManager:
     rulebaseconnectormanager.add(configs)
     return redirect(url_for('ConnectorView:list'))
 
-  @app.route('/connector/list/', methods=['GET', 'POST'])
-  def connector_list():
+  @route('/list/', methods=['GET', 'POST'])
+  def list(self):
     listrules = rulebaseconnectormanager.list_rules()
     return render_template('connectors.html', connectors=listrules)
-
-### Rulebase connector ###
-  @app.route('/connectors/', methods=['GET', 'POST'])
-  def connectors():
-    listrules = rulebaseconnectormanager.list_rules()
-    applist = appmanager.list_localapps()
-    return render_template('rulebaseconnector.html', connectors=listrules, localapps=applist)
-
-
-  
 
 #if __name__ == '__main__':
 #  webmanager = WebManager('dev')
