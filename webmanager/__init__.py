@@ -210,7 +210,17 @@ class WebManager:
     applist = appmanager.list_localapps()
     return render_template('rulebaseconnector.html', connectors=listrules, localapps=applist)
 
+  @app.route('/connectors/connectorview/', methods=['GET'])
+  def connectors_connectorview():
+    return render_template('connector_area.html')
 
+### API ###
+  @app.route('/api/connector/<connectorid>/save/', methods=['POST'])
+  def api_connector_id_save(connectorid):
+    configs = request.get_json();
+    rulebaseconnectormanager.update(connectorid, configs)
+    return redirect(url_for('ConnectorView:list'))
+    
   
 
 #if __name__ == '__main__':
