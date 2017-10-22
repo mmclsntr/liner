@@ -26,6 +26,8 @@ $(function() {
       $('div#connectors').append($new_connector);
       
       $new_connector.ready(function() {
+        $new_connector.attr("name", "new");
+
         var $table_event = $new_connector.find("table#table-event");
         var $table_action = $new_connector.find("table#table-action");
 
@@ -95,7 +97,30 @@ $(function() {
 
   // remove connector
   $("#connectors").on("click", "#connector-area #remove", function() {
-    $(this).parents("div#connector-area").remove();
+    var $connector = $(this).parents("div#connector-area");
+    var connector_id = $connector.attr("name");
+    
+    console.log(connector_id);
+
+    if (connector_id == "new") {
+      $connector.remove();
+      return;
+    }
+
+    var url = "/api/connector/" + connector_id + "/remove/";
+
+    $.ajax({
+      url: url,
+      type: "delete",
+      dataType : "json",
+      contentType: "application/json"
+    }).done(function(data) {
+      console.log(data);
+      $connector.remove();
+    }).fail(function(data) {
+      console.log('ajax error');
+      console.log(data);
+    });
   });
 
   // save connector
@@ -123,6 +148,23 @@ $(function() {
 
     console.log(connector_id);
     console.log(configs);
+
+    var url = "/api/connector/" + connector_id + "/save/";
+
+    $.ajax({
+      url: url,
+      type: "post",
+      dataType : "json",
+      data: JSON.stringify(configs),
+      contentType: "application/json"
+    }).done(function(data) {
+      console.log(data);
+      connector.attr("name", data._id);
+      connector.find("#id").text(data._id);
+    }).fail(function(data) {
+      console.log('ajax error');
+      console.log(data);
+    });
   });
 });
 </script>

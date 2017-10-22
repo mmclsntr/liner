@@ -87,6 +87,8 @@ def list_rules() -> list:
 def add(new_rule: dict) -> None:
   db = dbhelper.get_database(DB_NAME)
   col = dbhelper.get_collection(db, DB_COLLECTION_RULES)
+  if "_id" in new_rule:
+    new_rule["_id"] = ObjectId(new_rule["_id"])
   dbhelper.insert(col, new_rule)
 
 def update(connector_id: str, updated_rule: dict) -> None:

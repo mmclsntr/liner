@@ -1,45 +1,171 @@
 {% extends "layout.html" %}
 {% block content %}
+
+<script>
+$(function() {
+  var localapps = JSON.parse("{{localapps|safe}}".replace(/'/g, '"').replace(/ObjectId\(/g, "").replace(/\)/g, ""));
+  var devices = JSON.parse("{{devices|safe}}".replace(/'/g, '"').replace(/ObjectId\(/g, "").replace(/\)/g, ""));
+
+  function createDeviceArea(deviceData) {
+    $.ajax({
+      url: '/devices/deviceview/',
+      dataType : 'html',
+    }).done(function(data) {
+      var $new_device = $(data);
+      $('div#devices').append($new_device);
+      
+      $new_device.ready(function() {
+        $new_device.attr("name", "new");
+
+        
+        // insert data
+        if (deviceData == null) {
+          return;
+        }
+
+        $new_device.attr("name", deviceData._id);
+        $new_device.find("#id").text(deviceData._id);
+        $new_device.find("#name").val(deviceData.name);
+        $new_device.find("#note").val(deviceData.note);
+
+        visibleAppArea($new_device, deviceData._id);
+
+        // load apps
+        $.each(deviceData.apps, function(i, localapp_id) {
+          url = '/api/app/' + localapp_id;
+          $.ajax({
+            url: url,
+            type: "get",
+            dataType : "json",
+            contentType: "application/json"
+          })
+          .done(function(localapp) {
+            // load app_row view
+            url = "/devices/approwview/"
+            
+            $.ajax({
+              url: url,
+              type: "get",
+              dataType : "html",
+            })
+            .done(function(data) {
+              $app_row = $(data);
+              $tbody_app = $new_device.find("#app-area").find("table tbody");
+
+              $tbody_app.append($app_row);
+
+              $app_row.ready(function() {
+                $app_row.find("#name-app").text(localapp.name);
+                $app_row.attr("app-id", localapp._id);
+
+                $app_row.find("#setting-app").attr("onclick", "location.href='/device/" + deviceData._id + "/app/" + localapp_id + "'")
+                $app_row.find("#datastore-app").attr("onclick", "location.href='/device/" + deviceData._id + "/app/" + localapp_id + "/datastore/'")
+              });
+            })
+            .fail(function(data) {
+              console.log('ajax error');
+              console.log(data);
+            });
+
+          })
+          .fail(function(data) {
+            console.log('ajax error');
+            console.log(data);
+          });
+        });
+        
+      });
+    
+    }).fail(function(data) {
+      console.log('ajax error');
+      console.log(data);
+    });
+  }
+  
+  function visibleAppArea($deviceArea, deviceId) {
+    $deviceArea.find("#app-area").css("visibility", "visible");
+    $deviceArea.find("#add-app").attr("onclick", "location.href='/device/" + deviceId + "/store/'");
+  }
+
+  // load existed devices
+  $.each(devices, function(i, device) {
+    createDeviceArea(device);
+  });
+
+  // add new connector
+  $("#add").on("click", function() {createDeviceArea.call()});
+  
+  
+  // remove connector
+  $("#devices").on("click", "#device-area #remove", function() {
+    var $device = $(this).parents("div#device-area");
+    var device_id = $device.attr("name");
+    
+    console.log(device_id);
+   
+    if (device_id == "new") {
+      $device.remove();
+      return;
+    }
+
+    var url = "/api/device/" + device_id + "/remove/";
+
+    $.ajax({
+      url: url,
+      type: "delete",
+      dataType : "json",
+      contentType: "application/json"
+    }).done(function(data) {
+      console.log(data);
+      $device.remove();
+    }).fail(function(data) {
+      console.log('ajax error');
+      console.log(data);
+    });
+  });
+
+  // save connector
+  $("#devices").on("click", "#device-area #save", function() {
+    var $device = $(this).parents("div#device-area");
+    var device_id = $device.attr("name");
+
+    var configs = {
+      name: $device.find("input#name").val(),
+      note: $device.find("input#note").val(),
+    };
+
+    console.log(device_id);
+    console.log(configs);
+
+    var url = "/api/device/" + device_id + "/save/";
+
+    $.ajax({
+      url: url,
+      type: "post",
+      dataType : "json",
+      data: JSON.stringify(configs),
+      contentType: "application/json"
+    }).done(function(data) {
+      console.log(data);
+      $device.attr("name", data._id);
+      $device.find("#id").text(data._id);
+      visibleAppArea($device, data._id);
+    }).fail(function(data) {
+      console.log('ajax error');
+      console.log(data);
+    });
+  });
+});
+</script>
+
+
 <div class="container">
   <div class="row">
     <div class="col-md-12">
       <h1>Device List</h1>
-      <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th>name</th>
-            <th>apps</th>
-            <th>notes</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for device in devices %}
-            <tr>
-              <th>{{device.name}}</th>
-              <th>
-              {% if local_apps %}
-                {% for local_app in local_apps %}
-                  {% if device._id|string == local_app.device_id %}
-                    {{local_app.name}}
-                  {% endif %}
-                {% endfor %}
-              {% endif %}
-              </th>
-              <th>{{device.note}}</th>
-              <th>
-                <form method="POST" action="/device/{{device._id|string}}">
-                  <button type="submit" class="btn btn-default">Setting</button>
-                </form>
-              </th>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-      <form method="POST" action="/device/new/">
-        <button type="submit" class="btn btn-default">New</button>
-      </form>
-      <p><input type="button" class="btn btn-default" onclick="location.href='/'"value="Top"></p>
+      <div id="devices"></div>
+      <p><button type="button" id="add" class="btn btn-default">add</button></p>
+      <p><input type="button" class="btn btn-default" onclick="location.href='/'"value="top"></p>
     </div>
   </div>
 </div>

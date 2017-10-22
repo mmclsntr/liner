@@ -1,0 +1,38 @@
+<div id="device-area" class="panel panel-default">
+  <div class="panel-body">
+    <h4>
+      id: <div id="id"></div>
+    </h4>
+    <table class="table">
+      <tbody>
+        <tr>
+          <th>name</th>
+            <th><input type="text" class="form-control" id="name" value=""></th>
+        </tr>
+        <tr>
+          <th>apps</th>
+          <th>
+            <div id="app-area" style="visibility:hidden">
+              <table class="table table-bordered">
+                <tbody>
+                <!-- insert apps --!>
+                </tbody>
+              </table>
+              <p>
+                <button type="button" class="btn btn-default" id="add-app">add</button>
+              </p>
+            </div>
+          </th>
+        </tr>
+        <tr>
+          <th>notes</th>
+          <th><input type="text" class="form-control" id="note" value=""></th>
+        </tr>
+      </tbody>
+    </table>
+
+    <button id="save" type="button" class="btn btn-default">save</button>
+    <button type="button" id="remove" class="btn btn-default">remove</button>
+
+  </div>
+</div>

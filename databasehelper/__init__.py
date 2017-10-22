@@ -1,5 +1,6 @@
 import pymongo
 import configmanager
+from bson.codec_options import CodecOptions
 
 __addr = configmanager.get_key('DATABASE', 'DatabaseAddr')
 __port = int(configmanager.get_key('DATABASE', 'DatabasePort'))
@@ -10,9 +11,22 @@ def get_database(name: str) -> pymongo.database:
   database = __client[name]
   return database
 
+def isExistCollection(database, name: str) -> bool:
+  collist = list_collection_names(database)
+  for colname in collist:
+    if colname == name:
+      return True
+  return False
+
+def list_collection_names(database) -> list:
+  return database.collection_names()
+
+def create_collection(database, name: str) -> pymongo.collection:
+  database.create_collection(name, capped=True, size=256 * 1024, max=100)
+  return get_collection(database, name)
+  
 def get_collection(database, name: str) -> pymongo.collection:
   collection = database[name]
-  #database.command({"convertToCapped": name, "size": 1024 * 1024})
   return collection
 
 def insert(collection, doc):

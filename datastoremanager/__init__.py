@@ -18,7 +18,11 @@ class DataStoreThread(threading.Thread):
 
   def __store(self) -> None:
     db = databasehelper.get_database(DB_NAME)
-    col = databasehelper.get_collection(db, DB_COLLECTION_TEMP_DATASTORE + str(self.__id))
+    colname = DB_COLLECTION_TEMP_DATASTORE + str(self.__id)
+    if not databasehelper.isExistCollection(db, colname):
+      col = databasehelper.create_collection(db, colname)
+    else:
+      col = databasehelper.get_collection(db, colname)
     while self.__isrunning:
       readVal = self.__node.read()
       #print(readVal)
@@ -49,5 +53,12 @@ def kill_datastorer(node_id: str) -> None:
   del data_stores[node_id]
 
 def killall() -> None:
-  for datastore in data_stores.values():
-    datastore.kill()
+  for node_id in data_stores.keys():
+    kill_datastorer(node_id)
+
+def remove_datastore(node_id: str) -> None:
+  colname = DB_COLLECTION_TEMP_DATASTORE + str(node_id)
+  db = databasehelper.get_database(DB_NAME)
+  col = databasehelper.get_collection(db, colname)
+  databasehelper.drop(col)
+

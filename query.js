@@ -40,33 +40,11 @@ shellPrint(result);
 global_id = db.global_apps.find({name: 'gpio'})[0]._id.valueOf();
 
 
-devices = [
-  {
-    name: 'led1',
-    note: ''
-  },
-  {
-    name: 'led2',
-    note: ''
-  }
-]
-
-
-db.devices.drop();
-db.createCollection('devices');
-db.devices.insert(devices);
-result = db.devices.find();
-shellPrint(result);
-
-led1_id = db.devices.find({name: 'led1'})[0]._id.valueOf();
-led2_id = db.devices.find({name: 'led2'})[0]._id.valueOf();
-
 localapps = [
 {
   name: 'gpio23',
   module_name: 'gpiodigital',
   global_app_id: global_id,
-  device_id: led1_id,
   readtype: 'int',
   writetype: 'int',
   note: '',
@@ -82,7 +60,6 @@ localapps = [
   name: 'gpio24',
   module_name: 'gpiodigital',
   global_app_id: global_id,
-  device_id: led2_id,
   readtype: 'int',
   writetype: 'int',
   note: '',
@@ -104,6 +81,28 @@ shellPrint(result);
 
 gpio23_id = db.local_apps.find({name: 'gpio23'})[0]._id.valueOf();
 gpio24_id = db.local_apps.find({name: 'gpio24'})[0]._id.valueOf();
+
+
+
+devices = [
+  {
+    name: 'led1',
+    note: '',
+    apps: [gpio23_id]
+  },
+  {
+    name: 'led2',
+    note: '',
+    apps: [gpio24_id]
+  }
+]
+
+db.devices.drop();
+db.createCollection('devices');
+db.devices.insert(devices);
+result = db.devices.find();
+shellPrint(result);
+
 
 
 rules = [

@@ -76,10 +76,12 @@ def add(globalapp_id: str, new_app: dict) -> None:
   db = databasehelper.get_database(DB_NAME)
   col = databasehelper.get_collection(db, DB_COLLECTION_LOCALAPPS)
   globalapp_info = find_globalapp_info(globalapp_id)
-  configs['module_name'] = globalapp_info['module_name']
-  configs['global_app_id'] = globalapp_id
+  new_app['module_name'] = globalapp_info['module_name']
+  new_app['global_app_id'] = globalapp_id
+  if '_id' in new_app:
+    new_app["_id"] = ObjectId(new_app["_id"])
   result = databasehelper.insert(col, new_app)
-  __load_localapp(str(configs['_id']))
+  __load_localapp(str(new_app['_id']))
   # Add app file
   # TODO: Nest version for app store on cloud
 
@@ -88,13 +90,14 @@ def delete(localapp_id: str) -> None:
   col = databasehelper.get_collection(db, DB_COLLECTION_LOCALAPPS)
   result = databasehelper.delete(col, {'_id': ObjectId(localapp_id)})
   __unload_localapp(localapp_id)
+  datastoremanager.remove_datastore(localapp_id)
   return True
 
 def update_app_info(localapp_id: str, updated_app: dict) -> None:
   # Add info
   db = databasehelper.get_database(DB_NAME)
   col = databasehelper.get_collection(db, DB_COLLECTION_LOCALAPPS)
-  result = databasehelper.update(col, {'id': ObjectId(localapp_id)}, updated_app)
+  result = databasehelper.update(col, {'_id': ObjectId(localapp_id)}, updated_app)
   __load_localapp(localapp_id)
   # Add app file
   # TODO: Nest version for app store on cloud
