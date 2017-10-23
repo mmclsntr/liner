@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <h1>App</h1>
+        <table class="table">
+          <tbody>
+              <tr>
+                <th>id</th>
+                <th>{{app._id|string}}</th>
+              </tr>
+            <tr>
+              <th>store id</th>
+              <th>{{app.global_app_id|string}}</th>
+            </tr>
+            <tr>
+              <th>device id</th>
+              <th>{{deviceid}}</th>
+            </tr>
+            <tr>
+              <th>name</th>
+              <th>{{app.name}}</th>
+            </tr>
+            <tr>
+              <th>notes</th>
+              <th>{{app.note}}</th>
+            </tr>
+          </tbody>
+        </table>
+      <p><input type="button" class="btn btn-default" onclick="location.href='/devices/'"value="back to devices"></p>
+      <p><input type="button" class="btn btn-default" onclick="location.href='/'"value="top"></p>
+    </div>
+  </div>
+</div>
+{% endblock %}

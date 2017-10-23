@@ -113,9 +113,13 @@ class WebManager:
     devicemanager.update(deviceid, deviceinfo)
     return redirect("/devices/")
   
+  @app.route('/device/<deviceid>/app/<localappid>/control/', methods=['GET', 'POST'])
+  def device_app_control(deviceid, localappid):
+    appinfo = appmanager.find_localapp_info(localappid)
+    return render_template('device_app_control.html', app=appinfo, deviceid=deviceid)
 
   @app.route('/device/<deviceid>/app/<localappid>/datastore/', methods=['GET', 'POST'])
-  def device_datastore(deviceid, localappid):
+  def device_app_datastore(deviceid, localappid):
     return render_template('device_datastore.html')
 
 

@@ -58,6 +58,7 @@ $(function() {
                 $app_row.find("#name-app").text(localapp.name);
                 $app_row.attr("app-id", localapp._id);
 
+                $app_row.find("#control-app").attr("onclick", "location.href='/device/" + deviceData._id + "/app/" + localapp_id + "/control/'")
                 $app_row.find("#setting-app").attr("onclick", "location.href='/device/" + deviceData._id + "/app/" + localapp_id + "'")
                 $app_row.find("#datastore-app").attr("onclick", "location.href='/device/" + deviceData._id + "/app/" + localapp_id + "/datastore/'")
               });
@@ -162,10 +163,10 @@ $(function() {
 <div class="container">
   <div class="row">
     <div class="col-md-12">
+      <p><input type="button" class="btn btn-default" onclick="location.href='/'"value="top"></p>
       <h1>Device List</h1>
       <div id="devices"></div>
       <p><button type="button" id="add" class="btn btn-default">add</button></p>
-      <p><input type="button" class="btn btn-default" onclick="location.href='/'"value="top"></p>
     </div>
   </div>
 </div>
