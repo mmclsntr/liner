@@ -1,15 +1,90 @@
 {% extends "layout.html" %}
 {% block content %}
+<script>
+$(function() {
+  var app = JSON.parse("{{app|safe}}".replace(/'/g, '"').replace(/ObjectId\(/g, "").replace(/\)/g, ""));
+  console.log(app);
+
+  function readApp() {
+    var url = "/api/app/" + app._id + "/read/";
+    $.ajax({
+      url: url,
+      type : "get",
+      dataType : "json",
+      contentType: "application/json"
+    }).done(function(data) {
+      var value = data.value;
+      console.log("read: " + value);
+      $("#read-value").text(value);
+    }).fail(function(data) {
+      console.log('ajax error');
+      console.log(data);
+    });
+  }
+
+  function writeApp() {
+    var url = "/api/app/" + app._id + "/write/";
+    var value = $("#write-value").val();
+    var type = app.writetype;
+    
+    console.log("send: " + value);
+
+    $.ajax({
+      url: url,
+      type : "post",
+      dataType : "json",
+      data: JSON.stringify({value: value, type: type}),
+      contentType: "application/json"
+    }).done(function(data) {
+      console.log(data);
+      
+    }).fail(function(data) {
+      console.log('ajax error');
+      console.log(data);
+    });
+  }
+
+  readApp();
+  
+  $("button#read-reload").on("click", function() {
+    readApp();
+  });
+
+  var intervalflag = true;
+  $("input#read-autoreload").change(function() {
+    if ($(this).prop("checked")) {
+      console.log("auto reload ON");
+      intervalflag = true;
+      var intervalid = setInterval(function() {
+        readApp()
+        if (!intervalflag) {
+          clearInterval(intervalid);
+        }
+      }, 1000);
+    } else {
+      console.log("auto reload OFF");
+      intervalflag = false;
+
+    }
+  });
+  
+  $("button#write-send").on("click", function() {
+    writeApp();
+  });
+
+
+});
+</script>
 <div class="container">
   <div class="row">
     <div class="col-md-12">
       <h1>App</h1>
         <table class="table">
           <tbody>
-              <tr>
-                <th>id</th>
-                <th>{{app._id|string}}</th>
-              </tr>
+            <tr>
+              <th>id</th>
+              <th>{{app._id|string}}</th>
+            </tr>
             <tr>
               <th>store id</th>
               <th>{{app.global_app_id|string}}</th>
@@ -25,6 +100,25 @@
             <tr>
               <th>notes</th>
               <th>{{app.note}}</th>
+            </tr>
+          </tbody>
+        </table>
+        
+        <p><h3>control</h3></p>
+        <table class="table">
+          <tbody>
+            <tr id="control-read">
+              <th>read</th>
+              <th><span id="read-value"></span></th>
+              <th><button class="btn btn-default" id="read-reload">reload</button></th>
+              <th><label><input type="checkbox" id="read-autoreload" value="autoreload">autoreload</label></th>
+              <th><input type="button" id="datastore" class="btn btn-default" onclick="location.href='/device/{{deviceid}}/app/{{app._id}}/datastore/'" value="datastore"></th>
+            </tr>
+            <tr id="control-write">
+              <th>write</th>
+              <th><input type="text" class="form-control" id="write-value" name="value" value=""></th>
+              <th><span id="write-type">type: {{app.writetype}}</span></th>
+              <th><button class="btn btn-default" id="write-send">send</button></th>
             </tr>
           </tbody>
         </table>

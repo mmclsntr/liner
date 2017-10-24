@@ -108,3 +108,7 @@ def read_app_value(localapp_id: str):
 
 def write_app_value(localapp_id: str, value) -> None:
   __apps[localapp_id].write(value)
+
+def datastore(localapp_id: str, num: int) -> list:
+  return datastoremanager.find_datastore_values(localapp_id, num)
+  

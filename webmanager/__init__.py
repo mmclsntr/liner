@@ -120,7 +120,8 @@ class WebManager:
 
   @app.route('/device/<deviceid>/app/<localappid>/datastore/', methods=['GET', 'POST'])
   def device_app_datastore(deviceid, localappid):
-    return render_template('device_datastore.html')
+    appinfo = appmanager.find_localapp_info(localappid)
+    return render_template('device_app_datastore.html', app=appinfo, deviceid=deviceid)
 
 
 ### Rulebase connector ###
@@ -183,7 +184,51 @@ class WebManager:
     localapp = appmanager.find_localapp_info(localappid)
     localapp["_id"] = str(localapp["_id"])
     return jsonify(localapp)
+  
+  @app.route('/api/app/<localappid>/save/', methods=['POST'])
+  def api_app_id_save(localappid):
+    req = request.json
+    globalappid = req['global_app_id']
+    if localappid != 'new':
+      localappinfo = appmanager.find_localapp_info(localappid)
+    globalappinfo = appmanager.find_globalapp_info(localappinfo['global_app_id'])
+    query = {}
+    query['name'] = request.form['name']
+    query['note'] = request.form['note']
+    configs = []
+    for config in globalappinfo['required_configs']:
+      cf = {}
+      cf['name'] = config['name']
+      convertstr = str(config['type']) + '("' + str(request.form['config:' + str(config['name'])]) + '")'
+      cf['value'] = eval(convertstr)
+      cf['type'] = config['type']
+      configs.append(cf)
+    info['configs'] = configs
+    appmanager.update_app_info(localappid, info)
+    return jsonify(localapp)
+  
+  @app.route('/api/app/<localappid>/read/', methods=['GET'])
+  def api_app_id_read(localappid):
+    value = appmanager.read_app_value(localappid)
+    return jsonify({"value": value})
 
+  @app.route('/api/app/<localappid>/write/', methods=['POST'])
+  def api_app_id_write(localappid):
+    req = request.json
+    if "value" in req and "type" in req:
+      value = appmanager.write_app_value(localappid, eval(req["type"] + "(" + req["value"] + ")"))
+      return jsonify({"code": 200})
+    else:
+      return jsonify({"code": 400})
+
+  @app.route('/api/app/<localappid>/datastore/', methods=['GET'])
+  def api_app_id_datastore(localappid):
+    num = request.args.get("num");
+    values = appmanager.datastore(localappid, int(num));
+    return jsonify(values);
+
+
+    
 
 #if __name__ == '__main__':
 #  webmanager = WebManager('dev')

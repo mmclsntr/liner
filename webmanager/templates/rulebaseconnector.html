@@ -13,6 +13,10 @@ $(function() {
     $(this).parents('table').find("th#label-value").text("value (" + $(this).children("option[value=" + $(this).val() + "]").attr("valuetype") + ")");
   });
 
+  function showAlert(msg) {
+    alert(msg);
+  }
+
   function chValueType() {
     $(this).parents('table').find("th#label-value").text("value (" + $(this).children("option[value=" + $(this).val() + "]").attr("valuetype") + ")");
   }
@@ -81,11 +85,11 @@ $(function() {
 
       
     }).fail(function(data) {
+      showAlert('error: ' + data);
       console.log('ajax error');
       console.log(data);
     });
   }
-
 
   // load existed connector
   $.each(connectors, function(i, connector) {
@@ -115,9 +119,11 @@ $(function() {
       dataType : "json",
       contentType: "application/json"
     }).done(function(data) {
+      showAlert('Success removing the connector.');
       console.log(data);
       $connector.remove();
     }).fail(function(data) {
+      showAlert('error: ' + data);
       console.log('ajax error');
       console.log(data);
     });
@@ -161,11 +167,14 @@ $(function() {
       console.log(data);
       connector.attr("name", data._id);
       connector.find("#id").text(data._id);
+      showAlert('Success saving the connector.');
     }).fail(function(data) {
+      showAlert('error: ' + data);
       console.log('ajax error');
       console.log(data);
     });
   });
+
 });
 </script>
 

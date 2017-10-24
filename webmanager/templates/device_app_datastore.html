@@ -1,0 +1,95 @@
+{% extends "layout.html" %}
+{% block content %}
+<script>
+$(function() {
+  var app = JSON.parse("{{app|safe}}".replace(/'/g, '"').replace(/ObjectId\(/g, "").replace(/\)/g, ""));
+  console.log(app);
+
+  function reloadValues() {
+    var url = "/api/app/" + app._id + "/datastore/?num=10";
+    $.ajax({
+      url: url,
+      type : "get",
+      dataType : "json",
+      contentType: "application/json"
+    }).done(function(data) {
+      console.log(data);
+      $datastore = $("#datastore");
+      $datastore.html("<tr><th>time</th><th>value</th></tr>");
+      $datastore.ready(function() {
+        $.each(data, function(i, value) {
+          var date = new Date(value["time"] * 1000)
+          newvalue = "<tr><th>" + date.toLocaleString()  + "</th><th>" + value["value"] + "</th></tr>";
+          $datastore.append(newvalue);
+        });
+      });
+    }).fail(function(data) {
+      console.log('ajax error');
+      console.log(data);
+    });
+  }
+
+  reloadValues();
+  
+  $("button#reload").on("click", function() {
+    reloadValues();
+  });
+
+  var intervalflag = true;
+  $("input#autoreload").change(function() {
+    if ($(this).prop("checked")) {
+      console.log("auto reload ON");
+      intervalflag = true;
+      var intervalid = setInterval(function() {
+        reloadValues()
+        if (!intervalflag) {
+          clearInterval(intervalid);
+        }
+      }, 1000);
+    } else {
+      console.log("auto reload OFF");
+      intervalflag = false;
+
+    }
+  });
+});
+</script>
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <h1>Data Store</h1>
+        <table class="table">
+          <tbody>
+            <tr>
+              <th>id</th>
+              <th>{{app._id|string}}</th>
+            </tr>
+            <tr>
+              <th>name</th>
+              <th>{{app.name}}</th>
+            </tr>
+          </tbody>
+        </table>
+
+        <div>
+          <p>
+            <button class="btn btn-default" id="reload">reload</button>
+            <label><input type="checkbox" id="autoreload" value="autoreload">autoreload</label>
+          </p>
+        </div>
+        <table class="table">
+          <tbody id="datastore">
+            <tr>
+              <th>time</th>
+              <th>value</th>
+            </tr>
+          </tbody>
+        </table>
+
+      <p><input type="button" class="btn btn-default" onclick="location.href='/device/{{deviceid}}/app/{{app._id}}/control/'" value="back to app"></p>
+      <p><input type="button" class="btn btn-default" onclick="location.href='/devices/'"value="back to devices"></p>
+      <p><input type="button" class="btn btn-default" onclick="location.href='/'"value="top"></p>
+    </div>
+  </div>
+</div>
+{% endblock %}

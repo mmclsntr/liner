@@ -5,6 +5,10 @@
 $(function() {
   var localapps = JSON.parse("{{localapps|safe}}".replace(/'/g, '"').replace(/ObjectId\(/g, "").replace(/\)/g, ""));
   var devices = JSON.parse("{{devices|safe}}".replace(/'/g, '"').replace(/ObjectId\(/g, "").replace(/\)/g, ""));
+  
+  function showAlert(msg) {
+    alert(msg);
+  }
 
   function createDeviceArea(deviceData) {
     $.ajax({
@@ -119,7 +123,9 @@ $(function() {
     }).done(function(data) {
       console.log(data);
       $device.remove();
+      showAlert('Success removing the device.');
     }).fail(function(data) {
+      showAlert('error: ' + data);
       console.log('ajax error');
       console.log(data);
     });
@@ -151,7 +157,9 @@ $(function() {
       $device.attr("name", data._id);
       $device.find("#id").text(data._id);
       visibleAppArea($device, data._id);
+      showAlert('Success saving the device.');
     }).fail(function(data) {
+      showAlert('error: ' + data);
       console.log('ajax error');
       console.log(data);
     });

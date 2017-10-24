@@ -48,6 +48,7 @@ def delete_appid(device_id: str, localapp_id: str) -> None:
   
 def delete_apps(device_id: str) -> None:
   device = find_device_info(device_id)
-  for app in device["apps"]:
-    appmanager.delete(app)
-    delete_appid(device_id, app)
+  if 'apps' in device: 
+    for app in device["apps"]:
+      appmanager.delete(app)
+      delete_appid(device_id, app)

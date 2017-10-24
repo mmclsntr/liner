@@ -1,6 +1,6 @@
 globalapps = [
 {
-  name: 'gpio',
+  name: 'gpio int-int',
   note: '',
   module_name: 'gpiodigital',
   readtype: 'int',
@@ -13,7 +13,7 @@ globalapps = [
   ]
 },
 {
-  name: 'socket',
+  name: 'socket int-int',
   note: '',
   module_name: 'socket',
   readtype: 'int',
@@ -37,7 +37,7 @@ db.global_apps.insert(globalapps);
 result = db.global_apps.find();
 shellPrint(result);
 
-global_id = db.global_apps.find({name: 'gpio'})[0]._id.valueOf();
+global_id = db.global_apps.find({name: 'gpio int-int'})[0]._id.valueOf();
 
 
 localapps = [

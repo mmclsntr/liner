@@ -28,11 +28,19 @@ class SocketManager:
     self.__client.sendall('read'.encode('utf-8'))
     data = self.__client.recv(1000)
     self.__client.close()
-    return data.decode('utf-8')
+    strval = data.decode('utf-8')
+    if strval != '':
+      return int(data.decode('utf-8'))
+    else:
+      return 0;
 
   def write(self, value):
     self.__client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     self.__client.connect(self.__address)
     self.__client.sendall('write'.encode('utf-8'))
-    self.__client.sendall(value.encode('utf-8'))
+    if value != '':
+      self.__client.sendall(str(value).encode('utf-8'))
+    else:
+      self.__client.sendall(''.encode('utf-8'))
     self.__client.close()
+
