@@ -216,7 +216,7 @@ class WebManager:
   def api_app_id_write(localappid):
     req = request.json
     if "value" in req and "type" in req:
-      value = appmanager.write_app_value(localappid, eval(req["type"] + "(" + req["value"] + ")"))
+      value = appmanager.write_app_value(localappid, eval(req["type"] + "('" + req["value"] + "')"))
       return jsonify({"code": 200})
     else:
       return jsonify({"code": 400})

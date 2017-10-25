@@ -42,16 +42,17 @@ class RuleBaseConnectorThread(threading.Thread):
         secondvalue = str(desceventnodevalues[1]['value'])
         eventoperator = str(event['operator'])
         eventvalue = str(event['value'])
+        eventtype = str(event['type'])
 
-        firstrule = firstvalue + eventoperator + eventvalue
-        secondrule = secondvalue + eventoperator + eventvalue
+        firstrule = eventtype + "('" + firstvalue + "') " + eventoperator + " " + eventtype + "('" + eventvalue + "')"
+        secondrule = eventtype + "('" + secondvalue + "') " + eventoperator + " " + eventtype + "('" + eventvalue + "')"
 
         # Rule check
         if eval(firstrule) and not eval(secondrule):
           logging.info('ignite: ' + str(connection))
           action = connection['action']
           app_id = action['nodeid']
-          appmanager.write_app_value(app_id, action['value'])
+          appmanager.write_app_value(app_id, eval(action['type'] + "('" + action['value'] + "')"))
 
       time.sleep(self.interval)
 
