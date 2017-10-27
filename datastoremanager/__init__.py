@@ -1,5 +1,6 @@
 from bson.objectid import ObjectId
 import pymongo
+import logging
 
 import databasehelper
 import threading
@@ -9,6 +10,8 @@ import configmanager
 
 DB_NAME = configmanager.get_key('DATABASE', 'DatabaseName')
 DB_COLLECTION_TEMP_DATASTORE = configmanager.get_key('DATABASE', 'DataStoreCollectionTemp')
+
+logging.basicConfig(level=logging.DEBUG)
 
 INTERVAL = float(configmanager.get_key('INTERVALS', 'DatastoreInterval'))
 
@@ -27,11 +30,14 @@ class DataStoreThread(threading.Thread):
     else:
       col = databasehelper.get_collection(db, colname)
     while self.__isrunning:
-      readVal = self.__node.read()
-      #print(readVal)
-      doc = {'time': time.time(), 'value': readVal}
-      databasehelper.insert(col, doc)
-      time.sleep(self.interval)
+      try:
+        readVal = self.__node.read()
+        doc = {'time': time.time(), 'value': readVal}
+        databasehelper.insert(col, doc)
+        time.sleep(self.interval)
+      except:
+        logging.error('datastore read error: ' + self.__id)
+         
 
   def run(self) -> None:
     self.__isrunning = True
@@ -39,6 +45,9 @@ class DataStoreThread(threading.Thread):
 
   def kill(self) -> None:
     self.__isrunning = False
+
+  def is_running() -> bool:
+    return self.__isrunning
 
 
 
@@ -50,10 +59,17 @@ def run_datastorer(node_id: str, node: Node) -> None:
   datastorethread.start()
   data_stores[node_id] = datastorethread
 
+def is_running(node_id: str) -> bool:
+  if node_id in data_stores:
+    return data_stores[node_id].is_running()
+  else:
+    return False
+
 def kill_datastorer(node_id: str) -> None:
-  data_stores[node_id].kill()
-  data_stores[node_id] = None
-  del data_stores[node_id]
+  if node_id in data_stores:
+    data_stores[node_id].kill()
+    data_stores[node_id] = None
+    del data_stores[node_id]
 
 def killall() -> None:
   for node_id in data_stores.keys():
@@ -70,7 +86,5 @@ def find_datastore_values(node_id: str, num: int) -> list:
   db = databasehelper.get_database(DB_NAME)
   col = databasehelper.get_collection(db, colname)
   values = list(databasehelper.find(col, {}, {'sort': [('time', -1)], 'limit': num, 'projection': {'_id': False}}))
-  #values = list(databasehelper.find(col, {}, {'limit': num, 'projection': {'_id': False}}))
-  #values = sorted(values, key=lambda v: v["time"], reverse=True)
   return values
   

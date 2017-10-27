@@ -32,6 +32,8 @@ class RuleBaseConnectorThread(threading.Thread):
       connections = list(dbhelper.find(connectionscol, {}))
 
       for connection in connections:
+        if connection['on'] == False:
+          continue
         event = connection['event']
         eventnodecol = dbhelper.get_collection(db, DB_COLLECTION_TEMP_DATASTORE + str(event['nodeid']))
         eventnodevalues = dbhelper.find(eventnodecol, {}, dict(sort=[('time', pymongo.DESCENDING)], limit=2))

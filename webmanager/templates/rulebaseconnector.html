@@ -5,7 +5,7 @@
 $(function() {
   var localapps = JSON.parse("{{localapps|safe}}".replace(/'/g, '"').replace(/ObjectId\(/g, "").replace(/\)/g, ""));
   console.log(localapps);
-  var connectors = JSON.parse("{{connectors|safe}}".replace(/'/g, '"').replace(/ObjectId\(/g, "").replace(/\)/g, ""));
+  var connectors = JSON.parse("{{connectors|safe}}".replace(/'/g, '"').replace(/ObjectId\(/g, "").replace(/\)/g, "").replace(/True/g, "true").replace(/False/g, "false"));
   console.log(connectors);
 
   // select change
@@ -68,6 +68,7 @@ $(function() {
         $new_connector.attr("name", connectorData._id);
         $new_connector.find("#id").text(connectorData._id);
         $new_connector.find("#name").val(connectorData.name);
+        $new_connector.find("#on").prop("checked",connectorData.on);
         
         $selector_node_event.ready(function() {
           $selector_node_event.val(connectorData.event.nodeid);
@@ -139,6 +140,7 @@ $(function() {
 
     var configs = {
       name: connector.find("input#name").val(),
+      on: connector.find("input#on").prop("checked"),
       event: {
         nodeid: table_event.find("select[name='node']").val(),
         operator: table_event.find("select[name='operator']").val(),

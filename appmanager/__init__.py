@@ -30,11 +30,14 @@ def __load_localapp(localapp_id: str):
   configs = {}
   for config in listapp['configs']:
     configs[config['name']] = eval(config['type'])(config['value'])
-  #print(configs)
-  app = app_module.NodeAppMain(configs)
-  __apps[localapp_id] = app
-  datastoremanager.run_datastorer(localapp_id, app)
-  logging.debug('load local app: ' + str(listapp))
+  try:
+    app = app_module.NodeAppMain(configs)
+    __apps[localapp_id] = app
+    datastoremanager.run_datastorer(localapp_id, app)
+    logging.debug('load local app: ' + str(listapp))
+  except:
+    logging.error('load local app error: ' + str(listapp))
+    
 
 def unload_localapps():
   listapps = list_localapps()
@@ -42,10 +45,11 @@ def unload_localapps():
     __unload_localapp(str(listapp['_id']))
 
 def __unload_localapp(localapp_id: str):
-  __apps[localapp_id] = None
-  del __apps[localapp_id]
-  datastoremanager.kill_datastorer(localapp_id)
-  logging.debug('unload local app: ' + str(localapp_id))
+  if localapp_id in __apps:
+    __apps[localapp_id] = None
+    del __apps[localapp_id]
+    datastoremanager.kill_datastorer(localapp_id)
+    logging.debug('unload local app: ' + str(localapp_id))
 
 def list_localapps() -> list:
   db = databasehelper.get_database(DB_NAME)
@@ -103,11 +107,18 @@ def update_app_info(localapp_id: str, updated_app: dict) -> None:
   # TODO: Nest version for app store on cloud
 
 def read_app_value(localapp_id: str):
-  readvalue = __apps[localapp_id].read()
-  return readvalue
+  try:
+    readvalue = __apps[localapp_id].read()
+    return readvalue
+  except:
+    logging.error('read error: ' + localapp_id)
+    
 
 def write_app_value(localapp_id: str, value) -> None:
-  __apps[localapp_id].write(value)
+  try:
+    __apps[localapp_id].write(value)
+  except:
+    logging.error('write error: ' + localapp_id)
 
 def datastore(localapp_id: str, num: int) -> list:
   return datastoremanager.find_datastore_values(localapp_id, num)

@@ -30,6 +30,23 @@ globalapps = [
   ]
 },
 {
+  name: 'mabeee server int-int',
+  note: '',
+  module_name: 'mabeeeserver',
+  readtype: 'int',
+  writetype: 'int',
+  required_configs: [
+    {
+      name: 'uri',
+      type: 'str'
+    },
+    {
+      name: 'deviceid',
+      type: 'int'
+    }
+  ]
+},
+{
   name: 'phue onoff int-int',
   note: 'Please press hue bridge button before adding this app.',
   module_name: 'phueonoffmanager',
