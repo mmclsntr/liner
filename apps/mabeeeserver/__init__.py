@@ -34,7 +34,7 @@ class MabeeeServer:
     url = self.__uri + "/devices/" + str(self.__deviceid) + "/"
     res =  urllib.request.urlopen(url)
     content = json.loads(res.read().decode('utf-8'))
-    return content["pwm_duty"];
+    return content["pwm_duty"]
 
   def write(self, value):
     url = self.__uri + "/devices/" + str(self.__deviceid) + "/set/?pwm_duty=" + str(value)
