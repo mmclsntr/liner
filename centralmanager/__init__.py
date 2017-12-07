@@ -1,12 +1,10 @@
 import appmanager 
 import rulebaseconnectormanager
 import devicemanager
-from webmanager import WebManager
+import webmanager
 
 import time
 
-
-__webmanager = WebManager()
 
 def run() -> None:
   appmanager.load_localapps()
@@ -15,8 +13,9 @@ def run() -> None:
   print('rulebase')
   rulebaseconnectormanager.run()
   print('webmanager')
-  __webmanager.run(False)
+  webmanager.run_server(False)
 
 def destroy() -> None:
+  webmanager.kill_server()
   appmanager.unload_localapps()
   rulebaseconnectormanager.kill()

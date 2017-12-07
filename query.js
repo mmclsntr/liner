@@ -45,6 +45,23 @@ globalapps = [
       type: 'str'
     }
   ]
+},
+{
+  name: 'phue onoff bool-bool',
+  note: 'Please press hue bridge button before adding this app.',
+  module_name: 'phueonoffmanager',
+  readtype: 'int',
+  writetype: 'int',
+  required_configs: [
+    {
+      name: 'address',
+      type: 'str'
+    },
+    {
+      name: 'light_name',
+      type: 'str'
+    }
+  ]
 }
 ]
 

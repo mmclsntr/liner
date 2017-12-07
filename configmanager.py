@@ -1,6 +1,7 @@
+import os
 import configparser
 
-INI_FILE = 'config.ini'
+INI_FILE = os.path.dirname(os.path.abspath(__file__)) + '/config.ini'
 
 __config = configparser.SafeConfigParser()
 __config.read(INI_FILE, encoding='utf8')

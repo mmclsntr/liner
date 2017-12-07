@@ -10,5 +10,3 @@ def handler(signal, frame):
 
 signal.signal(signal.SIGINT, handler)
 
-while True:
-  pass

@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify
 import sys,os
 from bson.objectid import ObjectId
 import json
+from multiprocessing import Process
 
 #sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/..') 
 import appmanager
@@ -14,13 +15,22 @@ DB_NAME = configmanager.get_key('DATABASE', 'DatabaseName')
 
 class WebManager:
   app = Flask(__name__)
-
-  def __init__(self):
-    pass
-
-  def run(self, debug: bool):
-    self.app.debug = debug
+  
+  def run_server(self):
     self.app.run(host='0.0.0.0')
+
+  def __init__(self, debug: bool):
+    self.app.debug = debug
+    #self.server = Process(target=self.run_server)
+
+  def start(self):
+    #self.server.start()
+    self.app.run(host='0.0.0.0')
+
+  def stop(self):
+    #self.server.terminate()
+    #self.server.join()
+    pass
 
   @app.route('/')
   def index():
@@ -228,7 +238,12 @@ class WebManager:
     return jsonify(values);
 
 
-    
+webmanagerthread = WebManager(False)
+def run_server(debug: bool):
+  webmanagerthread.start()    
+
+def kill_server():
+  webmanagerthread.stop()
 
 #if __name__ == '__main__':
 #  webmanager = WebManager('dev')

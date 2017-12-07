@@ -107,11 +107,11 @@ def update_app_info(localapp_id: str, updated_app: dict) -> None:
   # TODO: Nest version for app store on cloud
 
 def read_app_value(localapp_id: str):
-  try:
+  #try:
     readvalue = __apps[localapp_id].read()
     return readvalue
-  except:
-    logging.error('read error: ' + localapp_id)
+  #except:
+  #  logging.error('read error: ' + localapp_id)
     
 
 def write_app_value(localapp_id: str, value) -> None:

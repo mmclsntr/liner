@@ -81,6 +81,23 @@ globalapps = [
   ]
 },
 {
+  name: 'phue brightness int-int',
+  note: 'Please press hue bridge button before adding this app.',
+  module_name: 'phuebrightnessmanager',
+  readtype: 'int',
+  writetype: 'int',
+  required_configs: [
+    {
+      name: 'address',
+      type: 'str'
+    },
+    {
+      name: 'light_name',
+      type: 'str'
+    }
+  ]
+},
+{
   name: 'ifttt outgoing webhocks',
   note: 'https://ifttt.com/maker_webhooks',
   module_name: 'iftttoutgoingwebhocks',
@@ -89,6 +106,32 @@ globalapps = [
   required_configs: [
     {
       name: 'uri',
+      type: 'str'
+    }
+  ]
+},
+{
+  name: 'ECHONET lite Air Conditioner ON/OFF int-int',
+  note: '',
+  module_name: 'echonetaircononoff',
+  readtype: 'int',
+  writetype: 'int',
+  required_configs: [
+    {
+      name: 'IP_Address',
+      type: 'str'
+    }
+  ]
+},
+{
+  name: 'ECHONET lite Air Conditioner Templeture int-int',
+  note: '',
+  module_name: 'echonetaircontemp',
+  readtype: 'int',
+  writetype: 'int',
+  required_configs: [
+    {
+      name: 'IP_Address',
       type: 'str'
     }
   ]
@@ -105,6 +148,7 @@ gpio_id = db.global_apps.find({name: 'gpio int-int'})[0]._id.valueOf();
 socket_id = db.global_apps.find({name: 'socket int-int'})[0]._id.valueOf();
 mabeee_id = db.global_apps.find({name: 'mabeee server int-int'})[0]._id.valueOf();
 phue_id = db.global_apps.find({name: 'phue onoff int-int'})[0]._id.valueOf();
+phueb_id = db.global_apps.find({name: 'phue brightness int-int'})[0]._id.valueOf();
 
 
 localapps = [

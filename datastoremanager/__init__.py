@@ -30,13 +30,13 @@ class DataStoreThread(threading.Thread):
     else:
       col = databasehelper.get_collection(db, colname)
     while self.__isrunning:
-      try:
+      #try:
         readVal = self.__node.read()
         doc = {'time': time.time(), 'value': readVal}
         databasehelper.insert(col, doc)
         time.sleep(self.interval)
-      except:
-        logging.error('datastore read error: ' + self.__id)
+      #except:
+      #  logging.error('datastore read error: ' + self.__id)
          
 
   def run(self) -> None:
