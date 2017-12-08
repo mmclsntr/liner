@@ -33,7 +33,22 @@ def check_interval_and_count(filename):
         time1 = time2
       count += 1
 
-    return {"intervals": intervals, "count": count}
+  return {"intervals": intervals, "count": count}
+
+def calc_avg(filename):
+  interval=0
+  count=0
+  dif=0
+  cnt=0
+  with open(filename, 'r') as f:
+    reader = csv.reader(f)
+    for row in reader:
+      interval += float(row[0])
+      count += float(row[1])
+      dif += float(row[3])
+      cnt += 1
+
+  return {"interval": interval / cnt, "count": count / cnt, "dif": dif / cnt}
 
 
 if __name__ == "__main__":
@@ -41,34 +56,11 @@ if __name__ == "__main__":
 # data numbers and connecting mode (0: neighbors, 1: chains)
   argvs = sys.argv
   if len(argvs) < 2:
-    print('Please set 2 files')
+    print('Please set filename')
     exit(0)
   
-  log_1 = argvs[1]
-  log_2 = argvs[2]
+  rstfile = argvs[1]
 
-  print(log_1)   
-  res1 = check_interval_and_count(log_1)
-  sum1 = 0
-  cnt1 = 0
-  avg1 = 0
-  for interval in res1["intervals"]:
-    print(str(cnt1) + "\t" + str(interval) + "\t" + str(interval - INTERVAL))
-    sum1 += interval
-    cnt1 += 1
-  avg1 = sum1 / cnt1
-  print("Avg. " + "\t" + str(avg1) + "\t" + str(avg1 - INTERVAL))
-  print("Count. " + "\t" + str(res1["count"]))
+  res = calc_avg(rstfile)
 
-  print(log_2)   
-  res2 = check_interval_and_count(log_2)
-  sum2 = 0
-  cnt2 = 0
-  avg2 = 0
-  for interval in res2["intervals"]:
-    print(str(cnt2) + "\t" + str(interval) + "\t" + str(interval - INTERVAL))
-    sum2 += interval
-    cnt2 += 1
-  avg2 = sum2 / cnt2
-  print("Avg." + "\t" + str(avg2) + "\t" + str(avg2 - INTERVAL))
-  print("Count." + "\t" + str(res2["count"]))
+  print(str(res["interval"]) + ',' + str(res["count"]) + ',' + str(INTERVAL) + ',' + str(res["dif"]))
