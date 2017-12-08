@@ -36,13 +36,13 @@ class TestApp:
     with open(self.iofile, 'r') as f:
       _value = f.read()
     with open(self.logfile, 'a') as f:
-      line = str(time.time()) + ',' + 'read' + ',' + _value + "\n"
+      line = str(time.time()) + ',' + _value + ',' + 'read' + "\n"
       f.write(line)
     return _value
 
   def write(self, value: str):
     with open(self.logfile, 'a') as f:
-      line = str(time.time()) + ',' + 'write' + ',' + value + "\n"
+      line = str(time.time()) + ',' + value + ',' + 'write' + "\n"
       f.write(line)
     with open(self.iofile, 'w') as f:
       f.write(value)
