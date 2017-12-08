@@ -14,6 +14,8 @@ def get_key(section: str, key: str) -> str:
 
 def set_value(section, key, value) -> None:
   __config.set(section, key, value)
+  with open(INI_FILE, "w") as f:
+    __config.write(f)
   return
 
 if __name__ == '__main__':

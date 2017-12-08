@@ -19,6 +19,8 @@ INTERVAL = float(configmanager.get_key('INTERVALS', 'DatastoreInterval'))
 def check_interval_and_count(filename):
   intervals = []
   count = 0
+  sum = 0
+  avg = 0
   with open(filename, 'r') as f:
     reader = csv.reader(f)
     time1 = None
@@ -29,11 +31,14 @@ def check_interval_and_count(filename):
       else:
         time2 = float(row[0])
         interval = time2 - time1
+        sum += interval
         intervals.append(interval)
         time1 = time2
       count += 1
 
-  return {"intervals": intervals, "count": count}
+    avg = sum / (count - 1)
+
+  return {"intervals": intervals, "count": count, "avg": avg}
 
 
 if __name__ == "__main__":
@@ -48,13 +53,4 @@ if __name__ == "__main__":
 
   #print(logfile)   
   res = check_interval_and_count(logfile)
-  sum = 0
-  cnt = 0
-  avg = 0
-  for interval in res["intervals"]:
-    #print(str(cnt1) + "\t" + str(interval) + "\t" + str(interval - INTERVAL))
-    sum += interval
-    cnt += 1
-  avg = sum / cnt
-  # avg,count,interval,dif
-  print(str(avg) + ',' + str(res["count"]) + ',' + str(INTERVAL) + ',' + str(avg - INTERVAL))
+  print(str(res["avg"]) + ',' + str(res["count"]) + ',' + str(INTERVAL) + ',' + str(res["avg"] - INTERVAL))

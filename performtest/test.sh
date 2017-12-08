@@ -1,12 +1,13 @@
 #!/bin/bash
 
-if [ "$1" = "" -o "$2" = "" ]; then
-    echo "Please set number, mode."
-    exit
+if [ "$1" = "" -o "$2" = "" -o "$3" = "" ]; then
+  echo "Please set number, mode, and interval"
+  exit
 fi
 
 NUM=$1
 MODE=$2
+INTERVAL=$3
 
 START_TIME=`date +%s`
 RESULT_DIR="result_"$1"_"$2"_"$START_TIME
@@ -17,6 +18,13 @@ mkdir $RESULT_DIR
 echo "Preparing data set..."
 APP_IDS_FILE="appids.txt"
 python dataset.py $NUM $MODE > $APP_IDS_FILE
+echo "Done"
+echo ""
+
+
+## Interval set
+echo "Setting interval"
+python changeinterval.py $INTERVAL
 echo "Done"
 echo ""
 
