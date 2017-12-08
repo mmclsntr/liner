@@ -62,6 +62,23 @@ globalapps = [
       type: 'str'
     }
   ]
+},
+{
+  name: 'test app int-int',
+  note: '',
+  module_name: 'testapp',
+  readtype: 'int',
+  writetype: 'int',
+  required_configs: [
+    {
+      name: 'iofile',
+      type: 'str'
+    },
+    {
+      name: 'logfile',
+      type: 'str'
+    }
+  ]
 }
 ]
 

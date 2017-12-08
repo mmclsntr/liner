@@ -30,13 +30,13 @@ def __load_localapp(localapp_id: str):
   configs = {}
   for config in listapp['configs']:
     configs[config['name']] = eval(config['type'])(config['value'])
-  try:
-    app = app_module.NodeAppMain(configs)
-    __apps[localapp_id] = app
-    datastoremanager.run_datastorer(localapp_id, app)
-    logging.debug('load local app: ' + str(listapp))
-  except:
-    logging.error('load local app error: ' + str(listapp))
+  #try:
+  app = app_module.NodeAppMain(configs)
+  __apps[localapp_id] = app
+  datastoremanager.run_datastorer(localapp_id, app)
+  logging.debug('load local app: ' + str(listapp))
+  #except:
+    #logging.error('load local app error: ' + str(listapp))
     
 
 def unload_localapps():
