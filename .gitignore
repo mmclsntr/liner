@@ -101,3 +101,4 @@ ENV/
 
 test.py
 performtest/result*
+performtest/appids.txt
