@@ -100,3 +100,4 @@ ENV/
 
 
 test.py
+performtest/result*
