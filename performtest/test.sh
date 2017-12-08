@@ -10,7 +10,7 @@ MODE=$2
 INTERVAL=$3
 
 START_TIME=`date +%s`
-RESULT_DIR="result_"$1"_"$2"_"$START_TIME
+RESULT_DIR="result_"$1"_"$2"_"$3"_"$START_TIME
 
 mkdir $RESULT_DIR
 
