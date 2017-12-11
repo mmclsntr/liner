@@ -104,3 +104,4 @@ performtest/result*
 performtest/appids.txt
 apps/testapp/io
 apps/testapp/logs
+performtest/datastore_rst
