@@ -19,7 +19,7 @@ class NodeAppMain(Node):
 
   def write(self, value):
     super(NodeAppMain, self).write(value)
-    self.__testapp.write(str(value))
+    self.__testapp.write(value)
 
 
 
@@ -38,12 +38,12 @@ class TestApp:
     with open(self.logfile, 'a') as f:
       line = str(time.time()) + ',' + _value + ',' + 'read' + "\n"
       f.write(line)
-    return _value
+    return int(_value)
 
-  def write(self, value: str):
+  def write(self, value: int):
     with open(self.logfile, 'a') as f:
-      line = str(time.time()) + ',' + value + ',' + 'write' + "\n"
+      line = str(time.time()) + ',' + str(value) + ',' + 'write' + "\n"
       f.write(line)
     with open(self.iofile, 'w') as f:
-      f.write(value)
+      f.write(str(value))
 

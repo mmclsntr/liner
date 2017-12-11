@@ -114,7 +114,7 @@ def read_app_value(localapp_id: str):
   #  logging.error('read error: ' + localapp_id)
     
 
-def write_app_value(localapp_id: str, value) -> None:
+def write_app_value(localapp_id, value) -> None:
   try:
     __apps[localapp_id].write(value)
   except:

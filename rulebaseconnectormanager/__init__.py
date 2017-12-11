@@ -54,7 +54,7 @@ class RuleBaseConnectorThread(threading.Thread):
           logging.info('ignite: ' + str(connection))
           action = connection['action']
           app_id = action['nodeid']
-          appmanager.write_app_value(app_id, eval(action['type'] + "('" + action['value'] + "')"))
+          appmanager.write_app_value(str(app_id), eval(action['type'] + "('" + str(action['value']) + "')"))
 
       time.sleep(self.interval)
 
