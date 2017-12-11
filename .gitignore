@@ -102,4 +102,5 @@ ENV/
 test.py
 performtest/result*
 performtest/appids.txt
-apps/testapp/
+apps/testapp/io
+apps/testapp/logs
