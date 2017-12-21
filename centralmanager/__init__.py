@@ -13,9 +13,8 @@ def run() -> None:
   print('rulebase')
   rulebaseconnectormanager.run()
   print('webmanager')
-  webmanager.run_server(False)
+  webmanager.run_server()
 
 def destroy() -> None:
-  webmanager.kill_server()
   appmanager.unload_localapps()
   rulebaseconnectormanager.kill()
