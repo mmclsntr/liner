@@ -3,7 +3,7 @@
 
 <script>
 $(function() {
-  var localapps = JSON.parse("{{localapps|safe}}".replace(/'/g, '"').replace(/ObjectId\(/g, "").replace(/\)/g, ""));
+  var nodes = JSON.parse("{{nodes|safe}}".replace(/'/g, '"').replace(/ObjectId\(/g, "").replace(/\)/g, ""));
   var devices = JSON.parse("{{devices|safe}}".replace(/'/g, '"').replace(/ObjectId\(/g, "").replace(/\)/g, ""));
   
   function showAlert(msg) {
@@ -35,15 +35,15 @@ $(function() {
         visibleAppArea($new_device, deviceData._id);
 
         // load apps
-        $.each(deviceData.apps, function(i, localapp_id) {
-          url = '/api/app/' + localapp_id;
+        $.each(deviceData.nodes, function(i, node_id) {
+          url = '/api/app/' + node_id;
           $.ajax({
             url: url,
             type: "get",
             dataType : "json",
             contentType: "application/json"
           })
-          .done(function(localapp) {
+          .done(function(node) {
             // load app_row view
             url = "/devices/approwview/"
             
@@ -59,12 +59,12 @@ $(function() {
               $tbody_app.append($app_row);
 
               $app_row.ready(function() {
-                $app_row.find("#name-app").text(localapp.name);
-                $app_row.attr("app-id", localapp._id);
+                $app_row.find("#name-app").text(node.name);
+                $app_row.attr("app-id", node._id);
 
-                $app_row.find("#control-app").attr("onclick", "location.href='/device/" + deviceData._id + "/app/" + localapp_id + "/control/'")
-                $app_row.find("#setting-app").attr("onclick", "location.href='/device/" + deviceData._id + "/app/" + localapp_id + "'")
-                $app_row.find("#datastore-app").attr("onclick", "location.href='/device/" + deviceData._id + "/app/" + localapp_id + "/datastore/'")
+                $app_row.find("#control-app").attr("onclick", "location.href='/device/" + deviceData._id + "/app/" + node_id + "/control/'")
+                $app_row.find("#setting-app").attr("onclick", "location.href='/device/" + deviceData._id + "/app/" + node_id + "'")
+                $app_row.find("#datastore-app").attr("onclick", "location.href='/device/" + deviceData._id + "/app/" + node_id + "/datastore/'")
               });
             })
             .fail(function(data) {

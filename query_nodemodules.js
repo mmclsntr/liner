@@ -1,4 +1,4 @@
-globalapps = [
+node_modules = [
 {
   name: 'gpio int-int',
   note: '',
@@ -138,8 +138,8 @@ globalapps = [
 }
 ]
 
-db.global_apps.drop();
-db.createCollection('global_apps');
-db.global_apps.insert(globalapps);
-result = db.global_apps.find();
+db.node_modules.drop();
+db.createCollection('node_modules');
+db.node_modules.insert(node_modules);
+result = db.node_modules.find();
 shellPrint(result);

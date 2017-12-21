@@ -71,7 +71,7 @@ def add_localapp(global_id):
     "module_name": "testapp",
     "readtype": 'int',
     "writetype": 'int',
-    "global_app_id": global_id,
+    "node_module_id": global_id,
     "configs": [
       {
         "name": 'iofile',

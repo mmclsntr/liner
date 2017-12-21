@@ -2,7 +2,7 @@ import socket
 import codecs
 import time
 
-from apps.node import Node
+from nodes.node import Node
 
 E_HEADER = "10810000"
 E_SEOJ = "05FF01"
@@ -14,25 +14,26 @@ class NodeAppMain(Node):
   def __init__(self, config: dict):
     super(NodeAppMain, self).__init__()
     self.__addr = config['IP_Address']
-    self.__aircontemp = ECHONETLiteAirConditionerTemp(self.__addr)
+    self.__aircononoff = ECHONETLiteAirConditionerONOFF(self.__addr)
 
   def read(self):
     super(NodeAppMain, self).read()
-    _value = self.__aircontemp.read()
+    _value = self.__aircononoff.read()
     return int(_value)
 
   def write(self, value):
     super(NodeAppMain, self).write(value)
-    self.__aircontemp.write(int(value))
+    self.__aircononoff.write(bool(value))
 
-class ECHONETLiteAirConditionerTemp:
+
+class ECHONETLiteAirConditionerONOFF:
   def __init__(self, addr):
     self.__ip_addr = addr
     self.__port = 3610
 
   def read(self):
     esv = "62"
-    epc = "B3"
+    epc = "80"
     edt = "00"
     
     message = E_HEADER + E_SEOJ + E_DEOJ + esv + E_OPC + epc + E_PDC1 + edt
@@ -50,21 +51,22 @@ class ECHONETLiteAirConditionerTemp:
 
     value = datastr[28:30]
 
-    return int(value, 16)
+    if value == "30":
+      return True
+    else:
+      return False
 
   def write(self, value):
     esv = "60"
-    epc = "B3"
-
-    if value > 50:
-      edt = "%02x" % 50
-    elif value < 0:
-      edt = "%02x" % 0
+    epc = "80"
+    if value:
+      edt = "30"
     else:
-      edt = "%02x" % value
+      edt = "31"
 
     message = E_HEADER + E_SEOJ + E_DEOJ + esv + E_OPC + epc + E_PDC1 + edt
     msg = codecs.decode(message, "hex")
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.sendto(msg, (self.__ip_addr, self.__port))
+

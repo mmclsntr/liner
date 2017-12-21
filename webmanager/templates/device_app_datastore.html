@@ -2,11 +2,11 @@
 {% block content %}
 <script>
 $(function() {
-  var app = JSON.parse("{{app|safe}}".replace(/'/g, '"').replace(/ObjectId\(/g, "").replace(/\)/g, ""));
-  console.log(app);
+  var node = JSON.parse("{{node|safe}}".replace(/'/g, '"').replace(/ObjectId\(/g, "").replace(/\)/g, ""));
+  console.log(node);
 
   function reloadValues() {
-    var url = "/api/app/" + app._id + "/datastore/?num=10";
+    var url = "/api/app/" + node._id + "/datastore/?num=10";
     $.ajax({
       url: url,
       type : "get",
@@ -62,11 +62,11 @@ $(function() {
           <tbody>
             <tr>
               <th>id</th>
-              <th>{{app._id|string}}</th>
+              <th>{{node._id|string}}</th>
             </tr>
             <tr>
               <th>name</th>
-              <th>{{app.name}}</th>
+              <th>{{node.name}}</th>
             </tr>
           </tbody>
         </table>
@@ -86,7 +86,7 @@ $(function() {
           </tbody>
         </table>
 
-      <p><input type="button" class="btn btn-default" onclick="location.href='/device/{{deviceid}}/app/{{app._id}}/control/'" value="back to app"></p>
+      <p><input type="button" class="btn btn-default" onclick="location.href='/device/{{deviceid}}/app/{{node._id}}/control/'" value="back to app"></p>
       <p><input type="button" class="btn btn-default" onclick="location.href='/devices/'"value="back to devices"></p>
       <p><input type="button" class="btn btn-default" onclick="location.href='/'"value="top"></p>
     </div>

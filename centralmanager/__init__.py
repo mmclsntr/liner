@@ -1,5 +1,5 @@
-import appmanager 
-import rulebaseconnectormanager
+import nodemanager 
+import rulebaselinkage
 import devicemanager
 import webmanager
 
@@ -7,14 +7,14 @@ import time
 
 
 def run() -> None:
-  appmanager.load_localapps()
-  print('Locaded apps')
+  nodemanager.load_nodes()
+  print('Loaded nodes')
   time.sleep(3)
   print('rulebase')
-  rulebaseconnectormanager.run()
+  rulebaselinkage.run()
   print('webmanager')
   webmanager.run_server()
 
 def destroy() -> None:
-  appmanager.unload_localapps()
-  rulebaseconnectormanager.kill()
+  nodemanager.unload_nodes()
+  rulebaselinkage.kill()

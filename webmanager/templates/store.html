@@ -14,17 +14,17 @@
           </tr>
         </thead>
         <tbody>
-          {% for app in apps %}
+          {% for node in nodes %}
             <tr>
-              <th>{{app.name}}</th>
-              <th>{{app.note}}</th>
+              <th>{{node.name}}</th>
+              <th>{{node.note}}</th>
               <th>
-              {% for config in app.required_configs %}
+              {% for config in node.required_configs %}
                 {{config.name}} ({{config.type}})<br>
               {% endfor %}
               </th>
               <th>
-                <form method="POST" action="/device/{{deviceid|string}}/store/{{app._id|string}}">
+                <form method="POST" action="/device/{{deviceid|string}}/store/{{node._id|string}}">
                   <button type="submit" class="btn btn-default">Add</button>
                 </form>
               </th>

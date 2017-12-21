@@ -1,4 +1,4 @@
-from apps.node import Node
+from nodes.node import Node
 import wiringpi
 
 class NodeAppMain(Node):

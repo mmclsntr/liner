@@ -2,11 +2,11 @@
 {% block content %}
 <script>
 $(function() {
-  var app = JSON.parse("{{app|safe}}".replace(/'/g, '"').replace(/ObjectId\(/g, "").replace(/\)/g, ""));
-  console.log(app);
+  var node = JSON.parse("{{node|safe}}".replace(/'/g, '"').replace(/ObjectId\(/g, "").replace(/\)/g, ""));
+  console.log(node);
 
   function readApp() {
-    var url = "/api/app/" + app._id + "/read/";
+    var url = "/api/app/" + node._id + "/read/";
     $.ajax({
       url: url,
       type : "get",
@@ -23,9 +23,9 @@ $(function() {
   }
 
   function writeApp() {
-    var url = "/api/app/" + app._id + "/write/";
+    var url = "/api/app/" + node._id + "/write/";
     var value = $("#write-value").val();
-    var type = app.writetype;
+    var type = node.writetype;
     
     console.log("send: " + value);
 
@@ -78,16 +78,16 @@ $(function() {
 <div class="container">
   <div class="row">
     <div class="col-md-12">
-      <h1>App</h1>
+      <h1>Node</h1>
         <table class="table">
           <tbody>
             <tr>
               <th>id</th>
-              <th>{{app._id|string}}</th>
+              <th>{{node._id|string}}</th>
             </tr>
             <tr>
-              <th>store id</th>
-              <th>{{app.global_app_id|string}}</th>
+              <th>node module id</th>
+              <th>{{node.node_module_id|string}}</th>
             </tr>
             <tr>
               <th>device id</th>
@@ -95,11 +95,11 @@ $(function() {
             </tr>
             <tr>
               <th>name</th>
-              <th>{{app.name}}</th>
+              <th>{{node.name}}</th>
             </tr>
             <tr>
               <th>notes</th>
-              <th>{{app.note}}</th>
+              <th>{{node.note}}</th>
             </tr>
           </tbody>
         </table>
@@ -112,12 +112,12 @@ $(function() {
               <th><span id="read-value"></span></th>
               <th><button class="btn btn-default" id="read-reload">reload</button></th>
               <th><label><input type="checkbox" id="read-autoreload" value="autoreload">autoreload</label></th>
-              <th><input type="button" id="datastore" class="btn btn-default" onclick="location.href='/device/{{deviceid}}/app/{{app._id}}/datastore/'" value="datastore"></th>
+              <th><input type="button" id="datastore" class="btn btn-default" onclick="location.href='/device/{{deviceid}}/app/{{node._id}}/datastore/'" value="datastore"></th>
             </tr>
             <tr id="control-write">
               <th>write</th>
               <th><input type="text" class="form-control" id="write-value" name="value" value=""></th>
-              <th><span id="write-type">type: {{app.writetype}}</span></th>
+              <th><span id="write-type">type: {{node.writetype}}</span></th>
               <th><button class="btn btn-default" id="write-send">send</button></th>
             </tr>
           </tbody>

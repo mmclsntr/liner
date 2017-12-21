@@ -3,8 +3,8 @@
 
 <script>
 $(function() {
-  var localapps = JSON.parse("{{localapps|safe}}".replace(/'/g, '"').replace(/ObjectId\(/g, "").replace(/\)/g, ""));
-  console.log(localapps);
+  var nodes = JSON.parse("{{nodes|safe}}".replace(/'/g, '"').replace(/ObjectId\(/g, "").replace(/\)/g, ""));
+  console.log(nodes);
   var connectors = JSON.parse("{{connectors|safe}}".replace(/'/g, '"').replace(/ObjectId\(/g, "").replace(/\)/g, "").replace(/True/g, "true").replace(/False/g, "false"));
   console.log(connectors);
 
@@ -37,14 +37,14 @@ $(function() {
 
         // make app selecters
         var $selector_node_event = $table_event.find("select[name='node']");
-        $.each(localapps, function(i, localapp) {
-          var $new_option = $("<option>").val(localapp._id).attr("valuetype", localapp.readtype).text(localapp.name);
+        $.each(nodes, function(i, node) {
+          var $new_option = $("<option>").val(node._id).attr("valuetype", node.readtype).text(node.name);
           $selector_node_event.append($new_option);
         });
         
         var $selector_node_action = $table_action.find("select[name='node']");
-        $.each(localapps, function(i, localapp) {
-          var $new_option = $("<option>").val(localapp._id).attr("valuetype", localapp.writetype).text(localapp.name);
+        $.each(nodes, function(i, node) {
+          var $new_option = $("<option>").val(node._id).attr("valuetype", node.writetype).text(node.name);
           $selector_node_action.append($new_option);
         });
         

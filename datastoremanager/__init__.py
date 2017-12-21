@@ -5,7 +5,7 @@ import logging
 import databasehelper
 import threading
 import time
-from apps.node import Node
+from nodes.node import Node
 import configmanager
 
 DB_NAME = configmanager.get_key('DATABASE', 'DatabaseName')

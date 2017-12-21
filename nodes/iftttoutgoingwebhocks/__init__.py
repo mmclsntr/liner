@@ -1,6 +1,6 @@
 import urllib
 import json
-from apps.node import Node
+from nodes.node import Node
 
 class NodeAppMain(Node):
   def __init__(self, config: dict):

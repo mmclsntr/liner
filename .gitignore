@@ -102,6 +102,6 @@ ENV/
 test.py
 performtest/result*
 performtest/appids.txt
-apps/testapp/io
-apps/testapp/logs
+nodes/testapp/io
+nodes/testapp/logs
 performtest/datastore_rst

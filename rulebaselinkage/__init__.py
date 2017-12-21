@@ -1,6 +1,6 @@
 import databasehelper as dbhelper
 import configmanager
-import appmanager
+import nodemanager
 import threading
 import time
 import logging
@@ -12,7 +12,7 @@ DB_COLLECTION_RULES = configmanager.get_key('DATABASE', 'RulesCollection')
 DB_COLLECTION_TEMP_DATASTORE = configmanager.get_key('DATABASE', 'DataStoreCollectionTemp')
 INTERVAL = float(configmanager.get_key('INTERVALS', 'RulebaseInterval'))
  
-class RuleBaseConnectorThread(threading.Thread):
+class RuleBaseLinkageThread(threading.Thread):
   __instance = None
 
   def __new__(cls, *args, **keys):
@@ -21,7 +21,7 @@ class RuleBaseConnectorThread(threading.Thread):
     return cls.__instance
 
   def __init__(self) -> None:
-    super(RuleBaseConnectorThread, self).__init__()
+    super(RuleBaseLinkageThread, self).__init__()
     logging.basicConfig(level=logging.DEBUG)
     self.interval = INTERVAL
 
@@ -53,8 +53,8 @@ class RuleBaseConnectorThread(threading.Thread):
         if eval(firstrule) and not eval(secondrule):
           logging.info('ignite: ' + str(connection))
           action = connection['action']
-          app_id = action['nodeid']
-          appmanager.write_app_value(str(app_id), eval(action['type'] + "('" + str(action['value']) + "')"))
+          node_id = action['nodeid']
+          nodemanager.write_node_value(str(node_id), eval(action['type'] + "('" + str(action['value']) + "')"))
 
       time.sleep(self.interval)
 
@@ -67,7 +67,7 @@ class RuleBaseConnectorThread(threading.Thread):
 
 
 
-rulebase_thread = RuleBaseConnectorThread()
+rulebase_thread = RuleBaseLinkageThread()
 
 def run() -> None:
   rulebase_thread.start()

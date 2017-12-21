@@ -1,5 +1,5 @@
 from phue import Bridge
-from apps.node import Node
+from nodes.node import Node
 
 class NodeAppMain(Node):
   def __init__(self, config: dict):
@@ -15,7 +15,7 @@ class NodeAppMain(Node):
 
   def write(self, value):
     super(NodeAppMain, self).write(value)
-    self.__phueonoffmanager.write(bool(value))
+    self.__phueonoffmanager.write(int(value))
 
 class PhueOnOffManager:
   def __init__(self, addr, lightname):
@@ -24,8 +24,13 @@ class PhueOnOffManager:
     self.lightname = lightname
 
   def read(self):
-    value = self.b.get_light(self.lightname, 'on')
+    value = self.b.get_light(self.lightname, 'bri')
     return int(value)
 
   def write(self, value):
-    self.b.set_light(self.lightname, 'on', value)
+    if value > 254:
+      value = 254
+    elif value < 0:
+      value = 0
+      
+    self.b.set_light(self.lightname, 'bri', value)

@@ -4,9 +4,9 @@ from bson.objectid import ObjectId
 import json
 
 #sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/..') 
-import appmanager
+import nodemanager
 import devicemanager
-import rulebaseconnectormanager
+import rulebaselinkage
 import configmanager
 
 
@@ -33,8 +33,8 @@ class WebManager:
   @app.route('/devices/', methods=['GET', 'POST'])
   def devices():
     devicelist = devicemanager.list_devices()
-    applist = appmanager.list_localapps()
-    return render_template('devices.html', devices=devicelist, localapps=applist)
+    nodelist = nodemanager.list_nodes()
+    return render_template('devices.html', devices=devicelist, nodes=nodelist)
 
   @app.route('/devices/deviceview/', methods=['GET'])
   def devices_deviceview():
@@ -44,20 +44,20 @@ class WebManager:
   def devices_app_row_view():
     return render_template('device_app_row.html')
 
-  @app.route('/device/<deviceid>/app/<localappid>', methods=['GET', 'POST'])
-  def device_localapp(deviceid, localappid):
-    appinfo = appmanager.find_localapp_info(localappid)
-    return render_template('device_app.html', islocal=True, app=appinfo, deviceid=deviceid)
+  @app.route('/device/<deviceid>/app/<nodeid>', methods=['GET', 'POST'])
+  def device_node(deviceid, nodeid):
+    appinfo = nodemanager.find_node_info(nodeid)
+    return render_template('device_app.html', islocal=True, node=nodeinfo, deviceid=deviceid)
 
-  @app.route('/device/<deviceid>/app/<localappid>/save/', methods=['POST'])
-  def device_localapp_save(deviceid, localappid):
-    localappinfo = appmanager.find_localapp_info(localappid)
-    globalappinfo = appmanager.find_globalapp_info(localappinfo['global_app_id'])
+  @app.route('/device/<deviceid>/app/<nodeid>/save/', methods=['POST'])
+  def device_node_save(deviceid, nodeid):
+    nodeinfo = nodemanager.find_node_info(nodeid)
+    node_moduleinfo = nodemanager.find_node_module_info(nodeinfo['node_module_id'])
     info = {}
     info['name'] = request.form['name']
     info['note'] = request.form['note']
     configs = []
-    for config in globalappinfo['required_configs']:
+    for config in node_moduleinfo['required_configs']:
       cf = {}
       cf['name'] = config['name']
       convertstr = str(config['type']) + '("' + str(request.form['config:' + str(config['name'])]) + '")'
@@ -66,38 +66,38 @@ class WebManager:
       configs.append(cf)
     info['configs'] = configs
     print(info)
-    appmanager.update_app_info(localappid, info)
+    nodemanager.update_node_info(nodeid, info)
     return redirect('/devices/')
 
-  @app.route('/device/<deviceid>/app/<localappid>/delete/', methods=['GET', 'POST'])
-  def device_localapp_delete(deviceid, localappid):
-    appmanager.delete(localappid)
-    devicemanager.delete_appid(deviceid, localappid)
+  @app.route('/device/<deviceid>/app/<nodeid>/delete/', methods=['GET', 'POST'])
+  def device_node_delete(deviceid, nodeid):
+    nodemanager.delete(nodeid)
+    devicemanager.delete_nodeid(deviceid, nodeid)
     return redirect('/devices/')
 
   @app.route('/device/<deviceid>/store/', methods=['GET', 'POST'])
   def device_appstore(deviceid):
-    applist = appmanager.list_globalapps()
-    return render_template('store.html', deviceid=deviceid, apps=applist)
+    nodelist = nodemanager.list_node_modules()
+    return render_template('store.html', deviceid=deviceid, nodes=nodelist)
 
-  @app.route('/device/<deviceid>/store/<globalappid>', methods=['GET', 'POST'])
-  def device_globalapp(deviceid, globalappid):
-    appinfo = appmanager.find_globalapp_info(globalappid)
-    return render_template('device_app.html', islocal=False, app=appinfo, deviceid=deviceid)
+  @app.route('/device/<deviceid>/store/<node_moduleid>', methods=['GET', 'POST'])
+  def device_node_module(deviceid, node_moduleid):
+    nodeinfo = nodemanager.find_node_module_info(node_moduleid)
+    return render_template('device_app.html', islocal=False, node=nodeinfo, deviceid=deviceid)
   
-  @app.route('/device/<deviceid>/store/<globalappid>/save/', methods=['POST'])
-  def device_globalapp_save(deviceid, globalappid):
-    globalappinfo = appmanager.find_globalapp_info(globalappid)
+  @app.route('/device/<deviceid>/store/<node_moduleid>/save/', methods=['POST'])
+  def device_node_module_save(deviceid, node_moduleid):
+    node_moduleinfo = nodemanager.find_node_module_info(node_moduleid)
     info = {}
     info['name'] = request.form['name']
     info['note'] = request.form['note']
-    info['module_name'] = globalappinfo['module_name']
-    info['readtype'] = globalappinfo['readtype']
-    info['writetype'] = globalappinfo['writetype']
-    info['global_app_id'] = globalappid
+    info['module_name'] = node_moduleinfo['module_name']
+    info['readtype'] = node_moduleinfo['readtype']
+    info['writetype'] = node_moduleinfo['writetype']
+    info['node_module_id'] = node_moduleid
     info["_id"] = str(ObjectId())
     configs = []
-    for config in globalappinfo['required_configs']:
+    for config in node_moduleinfo['required_configs']:
       cf = {}
       cf['name'] = config['name']
       convertstr = str(config['type']) + '("' + str(request.form['config:' + str(config['name'])]) + '")'
@@ -105,33 +105,33 @@ class WebManager:
       cf['type'] = config['type']
       configs.append(cf)
     info['configs'] = configs
-    appmanager.add(globalappid, info)
+    nodemanager.add(node_moduleid, info)
 
     deviceinfo = devicemanager.find_device_info(deviceid)
-    if not 'apps' in deviceinfo:
-      deviceinfo['apps'] = []
-    deviceinfo['apps'].append(str(info["_id"]))
+    if not 'nodes' in deviceinfo:
+      deviceinfo['nodes'] = []
+    deviceinfo['nodes'].append(str(info["_id"]))
     del deviceinfo["_id"]
     devicemanager.update(deviceid, deviceinfo)
     return redirect("/devices/")
   
-  @app.route('/device/<deviceid>/app/<localappid>/control/', methods=['GET', 'POST'])
-  def device_app_control(deviceid, localappid):
-    appinfo = appmanager.find_localapp_info(localappid)
-    return render_template('device_app_control.html', app=appinfo, deviceid=deviceid)
+  @app.route('/device/<deviceid>/app/<nodeid>/control/', methods=['GET', 'POST'])
+  def device_app_control(deviceid, nodeid):
+    nodeinfo = nodemanager.find_node_info(nodeid)
+    return render_template('device_app_control.html', node=nodeinfo, deviceid=deviceid)
 
-  @app.route('/device/<deviceid>/app/<localappid>/datastore/', methods=['GET', 'POST'])
-  def device_app_datastore(deviceid, localappid):
-    appinfo = appmanager.find_localapp_info(localappid)
-    return render_template('device_app_datastore.html', app=appinfo, deviceid=deviceid)
+  @app.route('/device/<deviceid>/app/<nodeid>/datastore/', methods=['GET', 'POST'])
+  def device_app_datastore(deviceid, nodeid):
+    nodeinfo = nodemanager.find_node_info(nodeid)
+    return render_template('device_app_datastore.html', node=nodeinfo, deviceid=deviceid)
 
 
 ### Rulebase connector ###
   @app.route('/connectors/', methods=['GET', 'POST'])
   def connectors():
-    listrules = rulebaseconnectormanager.list_rules()
-    applist = appmanager.list_localapps()
-    return render_template('rulebaseconnector.html', connectors=listrules, localapps=applist)
+    listrules = rulebaselinkage.list_rules()
+    nodelist = nodemanager.list_nodes()
+    return render_template('rulebaseconnector.html', connectors=listrules, nodes=nodelist)
 
   @app.route('/connectors/connectorview/', methods=['GET'])
   def connectors_connectorview():
@@ -147,15 +147,15 @@ class WebManager:
     if connectorid == "new":
       query["_id"] = str(ObjectId())
       _id = query["_id"]
-      rulebaseconnectormanager.add(query)
+      rulebaselinkage.add(query)
     else: 
-      rulebaseconnectormanager.update(connectorid, query)
+      rulebaselinkage.update(connectorid, query)
 
     return jsonify({"_id": _id})
     
   @app.route('/api/connector/<connectorid>/remove/', methods=['DELETE'])
   def api_connector_id_remove(connectorid):
-    rulebaseconnectormanager.delete(connectorid)
+    rulebaselinkage.delete(connectorid)
 
     return jsonify({"_id": connectorid})
   
@@ -181,24 +181,24 @@ class WebManager:
 
     return jsonify({"_id": deviceid})
 
-  @app.route('/api/app/<localappid>', methods=['GET'])
-  def api_app_id(localappid):
-    localapp = appmanager.find_localapp_info(localappid)
-    localapp["_id"] = str(localapp["_id"])
-    return jsonify(localapp)
+  @app.route('/api/app/<nodeid>', methods=['GET'])
+  def api_app_id(nodeid):
+    node = nodemanager.find_node_info(nodeid)
+    node["_id"] = str(node["_id"])
+    return jsonify(node)
   
-  @app.route('/api/app/<localappid>/save/', methods=['POST'])
-  def api_app_id_save(localappid):
+  @app.route('/api/app/<nodeid>/save/', methods=['POST'])
+  def api_app_id_save(nodeid):
     req = request.json
-    globalappid = req['global_app_id']
-    if localappid != 'new':
-      localappinfo = appmanager.find_localapp_info(localappid)
-    globalappinfo = appmanager.find_globalapp_info(localappinfo['global_app_id'])
+    node_moduleid = req['global_app_id']
+    if nodeid != 'new':
+      nodeinfo = nodemanager.find_node_info(nodeid)
+    node_moduleinfo = nodemanager.find_node_module_info(nodeinfo['node_module_id'])
     query = {}
     query['name'] = request.form['name']
     query['note'] = request.form['note']
     configs = []
-    for config in globalappinfo['required_configs']:
+    for config in node_moduleinfo['required_configs']:
       cf = {}
       cf['name'] = config['name']
       convertstr = str(config['type']) + '("' + str(request.form['config:' + str(config['name'])]) + '")'
@@ -206,36 +206,36 @@ class WebManager:
       cf['type'] = config['type']
       configs.append(cf)
     info['configs'] = configs
-    appmanager.update_app_info(localappid, info)
-    return jsonify(localapp)
+    nodemanager.update_node_info(nodeid, info)
+    return jsonify(node)
   
-  @app.route('/api/app/<localappid>/read/', methods=['GET'])
-  def api_app_id_read(localappid):
-    value = appmanager.read_app_value(localappid)
+  @app.route('/api/app/<nodeid>/read/', methods=['GET'])
+  def api_app_id_read(nodeid):
+    value = nodemanager.read_node_value(nodeid)
     return jsonify({"value": value})
 
-  @app.route('/api/app/<localappid>/write/', methods=['POST'])
-  def api_app_id_write(localappid):
+  @app.route('/api/app/<nodeid>/write/', methods=['POST'])
+  def api_app_id_write(nodeid):
     req = request.json
     if "value" in req and "type" in req:
-      value = appmanager.write_app_value(localappid, eval(req["type"] + "('" + req["value"] + "')"))
+      value = nodemanager.write_node_value(nodeid, eval(req["type"] + "('" + req["value"] + "')"))
       return jsonify({"code": 200})
     else:
       return jsonify({"code": 400})
 
-  @app.route('/api/app/<localappid>/datastore/', methods=['GET'])
-  def api_app_id_datastore(localappid):
+  @app.route('/api/app/<nodeid>/datastore/', methods=['GET'])
+  def api_app_id_datastore(nodeid):
     num = request.args.get("num");
-    values = appmanager.datastore(localappid, int(num));
+    values = nodemanager.datastore(nodeid, int(num));
     return jsonify(values);
 
 
 webmanager= WebManager(False)
 def run_server():
-  webmanagerthread.start()    
+  webmanager.start()    
 
 def kill_server():
-  webmanagerthread.stop()
+  webmanager.stop()
 
 #if __name__ == '__main__':
 #  webmanager = WebManager('dev')

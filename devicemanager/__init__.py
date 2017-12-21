@@ -1,6 +1,6 @@
 import databasehelper as dbhelper
 import configmanager
-import appmanager
+import nodemanager
 from bson.objectid import ObjectId
 
 DB_NAME = configmanager.get_key('DATABASE', 'DatabaseName')
@@ -40,15 +40,15 @@ def delete(device_id: str) -> None:
   result = dbhelper.delete(col, {"_id": ObjectId(device_id)})
   return result
 
-def delete_appid(device_id: str, localapp_id: str) -> None:
+def delete_nodeid(device_id: str, node_id: str) -> None:
   device = find_device_info(device_id)
-  device["apps"].remove(localapp_id)
+  device["nodes"].remove(node_id)
   print(device)
   update(device_id, device)
   
-def delete_apps(device_id: str) -> None:
+def delete_nodes(device_id: str) -> None:
   device = find_device_info(device_id)
-  if 'apps' in device: 
-    for app in device["apps"]:
-      appmanager.delete(app)
-      delete_appid(device_id, app)
+  if 'nodes' in device: 
+    for node in device["nodes"]:
+      nodemanager.delete(node)
+      delete_nodeid(device_id, node)

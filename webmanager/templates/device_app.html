@@ -5,30 +5,30 @@
     <div class="col-md-12">
       {% if islocal %}
         <h1>App</h1>
-        <form method="POST" action="/device/{{deviceid|string}}/app/{{app._id|string}}/save/">
+        <form method="POST" action="/device/{{deviceid|string}}/app/{{node._id|string}}/save/">
       {% else %}
         <h1>New App</h1>
-        <form method="POST" action="/device/{{deviceid|string}}/store/{{app._id|string}}/save/">
+        <form method="POST" action="/device/{{deviceid|string}}/store/{{node._id|string}}/save/">
       {% endif %}
         <table class="table">
           <tbody>
             {% if islocal %}
               <tr>
                 <th>id</th>
-                <th>{{app._id|string}}</th>
+                <th>{{node._id|string}}</th>
               </tr>
             {% else %}
               <tr>
                 <th>store name</th>
-                <th>{{app.name}}</th>
+                <th>{{node.name}}</th>
               </tr>
             {% endif %}
             <tr>
               <th>store id</th>
               {% if islocal %}
-                <th>{{app.global_app_id|string}}</th>
+                <th>{{node.node_module_id|string}}</th>
               {% else %}
-                <th>{{app._id|string}}</th>
+                <th>{{node._id|string}}</th>
               {% endif %}
             </tr>
             <tr>
@@ -37,19 +37,19 @@
             </tr>
             <tr>
               <th>read type</th>
-              <th>{{app.readtype}}</th>
+              <th>{{node.readtype}}</th>
             </tr>
             <tr>
               <th>write type</th>
-              <th>{{app.writetype}}</th>
+              <th>{{node.writetype}}</th>
             </tr>
             <tr>
               <th>name</th>
-              <th><input type="text" class="form-control" id="exampleInput" name="name" value="{{app.name}}"></th>
+              <th><input type="text" class="form-control" id="exampleInput" name="name" value="{{node.name}}"></th>
             </tr>
             <tr>
               <th>notes</th>
-              <th><input type="text" class="form-control" id="exampleInput" name="note" value="{{app.note}}"></th>
+              <th><input type="text" class="form-control" id="exampleInput" name="note" value="{{node.note}}"></th>
             </tr>
           </tbody>
         </table>
@@ -60,13 +60,13 @@
           <tbody>
             <tr>
               {% if islocal %}
-                {% for config in app.configs %}
+                {% for config in node.configs %}
                   <th>{{config.name}}</th>
                   <th><input type="text" class="form-control" id="exampleInput" name="config:{{config.name}}" value="{{config.value}}"></th>
                   <th>({{config.type}})</th>
                 {% endfor %}
               {% else %}
-                {% for config in app.required_configs %}
+                {% for config in node.required_configs %}
                   <th>{{config.name}}</th>
                   <th><input type="text" class="form-control" id="exampleInput" name="config:{{config.name}}" value=""></th>
                   <th>({{config.type}})</th>
@@ -78,7 +78,7 @@
         <p><button type="submit" class="btn btn-default">save</button></p>
       </form>
       {% if islocal %}
-        <input type="button" class="btn btn-default" onclick="location.href='/device/{{deviceid}}/app/{{app._id|string}}/delete/'"value="remove">
+        <input type="button" class="btn btn-default" onclick="location.href='/device/{{deviceid}}/app/{{node._id|string}}/delete/'"value="remove">
       {% endif %}
       <p><input type="button" class="btn btn-default" onclick="location.href='/devices/'"value="back to devices"></p>
       <p><input type="button" class="btn btn-default" onclick="location.href='/'"value="top"></p>
