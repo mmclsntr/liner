@@ -147,7 +147,7 @@ if __name__ == "__main__":
     exit(0)
 
   num = argvs[1]
-  mode = argvs[2]
+  connectors_num = int(argvs[2])
 
   drop_globalapps() 
   global_id = add_globalapp()
@@ -165,16 +165,17 @@ if __name__ == "__main__":
   
   event_id = ''
   action_id = ''
+  count = 0
   for app in localapps:
+    if count >= connectors_num:
+      break
     if event_id == '':
       event_id = app
     else:
       action_id = app
       add_rule(event_id, action_id)
-      if int(mode) == 0:
-        event_id = ''
-      else:
-        event_id = action_id
+      event_id = ''
+      count += 1
         
   for app in localapps:
     print(app)     

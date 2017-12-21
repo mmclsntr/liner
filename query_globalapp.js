@@ -30,6 +30,23 @@ globalapps = [
   ]
 },
 {
+  name: 'http get str-str',
+  note: '',
+  module_name: 'httpget',
+  readtype: 'str',
+  writetype: 'str',
+  required_configs: [
+    {
+      name: 'read_uri',
+      type: 'str'
+    },
+    {
+      name: 'write_uri',
+      type: 'str'
+    }
+  ]
+},
+{
   name: 'mabeee server int-int',
   note: '',
   module_name: 'mabeeeserver',
@@ -64,18 +81,57 @@ globalapps = [
   ]
 },
 {
-  name: 'test app int-int',
-  note: '',
-  module_name: 'testapp',
+  name: 'phue brightness int-int',
+  note: 'Please press hue bridge button before adding this app.',
+  module_name: 'phuebrightnessmanager',
   readtype: 'int',
   writetype: 'int',
   required_configs: [
     {
-      name: 'iofile',
+      name: 'address',
       type: 'str'
     },
     {
-      name: 'logfile',
+      name: 'light_name',
+      type: 'str'
+    }
+  ]
+},
+{
+  name: 'ifttt outgoing webhocks',
+  note: 'https://ifttt.com/maker_webhooks',
+  module_name: 'iftttoutgoingwebhocks',
+  readtype: 'str',
+  writetype: 'str',
+  required_configs: [
+    {
+      name: 'uri',
+      type: 'str'
+    }
+  ]
+},
+{
+  name: 'ECHONET lite Air Conditioner ON/OFF int-int',
+  note: '',
+  module_name: 'echonetaircononoff',
+  readtype: 'int',
+  writetype: 'int',
+  required_configs: [
+    {
+      name: 'IP_Address',
+      type: 'str'
+    }
+  ]
+},
+{
+  name: 'ECHONET lite Air Conditioner Templeture int-int',
+  note: '',
+  module_name: 'echonetaircontemp',
+  readtype: 'int',
+  writetype: 'int',
+  required_configs: [
+    {
+      name: 'IP_Address',
       type: 'str'
     }
   ]

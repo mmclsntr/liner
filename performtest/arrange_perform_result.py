@@ -38,7 +38,7 @@ def init():
 def printLine():
     global current_time, usrcpu_tmp, syscpu_tmp, guestcpu_tmp, totalcpu_tmp, minflt_tmp, majflt_tmp, vsz_tmp, rss_tmp, totalmem_tmp
     
-    print(str(current_time) + ',' + str(usrcpu_tmp) + ',' + str(syscpu_tmp) + ',' + str(guestcpu_tmp) + ',' + str(totalcpu_tmp) + ',,' + str(minflt_tmp) + ',' + str(majflt_tmp) + ',' + str(vsz_tmp) + ',' + str(rss_tmp) + ',' + str(totalmem_tmp))
+    print(str(current_time) + ',' + str(usrcpu_tmp) + ',' + str(syscpu_tmp) + ',' + str(guestcpu_tmp) + ',' + str(totalcpu_tmp) + ',' + str(minflt_tmp) + ',' + str(majflt_tmp) + ',' + str(vsz_tmp) + ',' + str(rss_tmp) + ',' + str(totalmem_tmp))
 
 
 

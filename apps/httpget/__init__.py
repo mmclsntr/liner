@@ -27,7 +27,8 @@ class HTTPGet:
   def read(self):
     res =  urllib.request.urlopen(self.__readuri)
     content = res.read().decode('utf-8')
-    return content
+    json_dict = json.loads(content)
+    return json_dict['value']
 
   def write(self, value):
     url = self.__writeuri + "?value=" + str(value)

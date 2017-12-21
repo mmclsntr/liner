@@ -15,7 +15,6 @@ class NodeAppMain(Node):
     super(NodeAppMain, self).__init__()
     self.__addr = config['IP_Address']
     self.__aircononoff = ECHONETLiteAirConditionerONOFF(self.__addr)
-    self.__sock
 
   def read(self):
     super(NodeAppMain, self).read()
