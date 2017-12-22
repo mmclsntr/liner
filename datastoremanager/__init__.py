@@ -81,10 +81,10 @@ def remove_datastore(node_id: str) -> None:
   col = databasehelper.get_collection(db, colname)
   databasehelper.drop(col)
 
-def find_datastore_values(node_id: str, num: int) -> list:
+def find_datastore_values(node_id: str, limit: int) -> list:
   colname = DB_COLLECTION_TEMP_DATASTORE + str(node_id)
   db = databasehelper.get_database(DB_NAME)
   col = databasehelper.get_collection(db, colname)
-  values = list(databasehelper.find(col, {}, {'sort': [('time', -1)], 'limit': num, 'projection': {'_id': False}}))
+  values = list(databasehelper.find(col, {}, {'sort': [('time', -1)], 'limit': limit, 'projection': {'_id': False}}))
   return values
   
