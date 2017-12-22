@@ -38,14 +38,18 @@ $(function() {
         // make app selecters
         var $selector_node_event = $table_event.find("select[name='node']");
         $.each(nodes, function(i, node) {
-          var $new_option = $("<option>").val(node._id).attr("valuetype", node.readtype).text(node.name);
-          $selector_node_event.append($new_option);
+          if (node.readtype) {
+            var $new_option = $("<option>").val(node._id).attr("valuetype", node.readtype).text(node.name);
+            $selector_node_event.append($new_option);
+          }
         });
         
         var $selector_node_action = $table_action.find("select[name='node']");
         $.each(nodes, function(i, node) {
-          var $new_option = $("<option>").val(node._id).attr("valuetype", node.writetype).text(node.name);
-          $selector_node_action.append($new_option);
+          if (node.writetype) {
+            var $new_option = $("<option>").val(node._id).attr("valuetype", node.writetype).text(node.name);
+            $selector_node_action.append($new_option);
+          }
         });
         
         $selector_node_event.change(function() {chValueType.call(this)});

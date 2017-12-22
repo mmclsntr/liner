@@ -34,7 +34,11 @@ class RuleBaseLinkageThread(threading.Thread):
       for connection in connections:
         if connection['on'] == False:
           continue
+
         event = connection['event']
+        if 'type' not in event:
+          continue
+
         eventnodecol = dbhelper.get_collection(db, DB_COLLECTION_TEMP_DATASTORE + str(event['nodeid']))
         eventnodevalues = dbhelper.find(eventnodecol, {}, dict(sort=[('time', pymongo.DESCENDING)], limit=2))
         # Sort with time by desc
@@ -53,6 +57,8 @@ class RuleBaseLinkageThread(threading.Thread):
         if eval(firstrule) and not eval(secondrule):
           logging.info('ignite: ' + str(connection))
           action = connection['action']
+          if 'type' not in action:
+            continue
           node_id = action['nodeid']
           nodemanager.write_node_value(str(node_id), eval(action['type'] + "('" + str(action['value']) + "')"))
 

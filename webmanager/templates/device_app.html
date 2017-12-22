@@ -35,14 +35,18 @@
               <th>device id</th>
               <th>{{deviceid}}</th>
             </tr>
+            {% if node.readtype is defined %}
             <tr>
               <th>read type</th>
               <th>{{node.readtype}}</th>
             </tr>
+            {% endif %}
+            {% if node.readtype is defined %}
             <tr>
               <th>write type</th>
               <th>{{node.writetype}}</th>
             </tr>
+            {% endif %}
             <tr>
               <th>name</th>
               <th><input type="text" class="form-control" id="exampleInput" name="name" value="{{node.name}}"></th>

@@ -33,7 +33,9 @@ def __load_node(node_id: str):
   #try:
   node = node_module.NodeAppMain(configs)
   __nodes[node_id] = node
-  datastoremanager.run_datastorer(node_id, node)
+  # Load datastore
+  if 'readtype' in listnode:
+    datastoremanager.run_datastorer(node_id, node)
   logging.debug('load local node: ' + str(listnode))
   #except:
     #logging.error('load local node error: ' + str(listnode))
@@ -86,8 +88,6 @@ def add(node_module_id: str, new_node: dict) -> None:
     new_node["_id"] = ObjectId(new_node["_id"])
   result = databasehelper.insert(col, new_node)
   __load_node(str(new_node['_id']))
-  # Add node file
-  # TODO: Nest version for node store on cloud
 
 def delete(node_id: str) -> None:
   db = databasehelper.get_database(DB_NAME)
@@ -103,8 +103,6 @@ def update_node_info(node_id: str, updated_node: dict) -> None:
   col = databasehelper.get_collection(db, DB_COLLECTION_NODES)
   result = databasehelper.update(col, {'_id': ObjectId(node_id)}, updated_node)
   __load_node(node_id)
-  # Add node file
-  # TODO: Nest version for node store on cloud
 
 def read_node_value(node_id: str):
   #try:

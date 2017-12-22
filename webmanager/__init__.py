@@ -92,8 +92,10 @@ class WebManager:
     info['name'] = request.form['name']
     info['note'] = request.form['note']
     info['module_name'] = node_moduleinfo['module_name']
-    info['readtype'] = node_moduleinfo['readtype']
-    info['writetype'] = node_moduleinfo['writetype']
+    if 'readtype' in node_moduleinfo:
+      info['readtype'] = node_moduleinfo['readtype']
+    if 'writetype' in node_moduleinfo:
+      info['writetype'] = node_moduleinfo['writetype']
     info['node_module_id'] = node_moduleid
     info["_id"] = str(ObjectId())
     configs = []
@@ -190,7 +192,7 @@ class WebManager:
   @app.route('/api/app/<nodeid>/save/', methods=['POST'])
   def api_app_id_save(nodeid):
     req = request.json
-    node_moduleid = req['global_app_id']
+    node_moduleid = req['node_module_id']
     if nodeid != 'new':
       nodeinfo = nodemanager.find_node_info(nodeid)
     node_moduleinfo = nodemanager.find_node_module_info(nodeinfo['node_module_id'])

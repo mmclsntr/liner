@@ -13,6 +13,30 @@ node_modules = [
   ]
 },
 {
+  name: 'gpio int-int [readonly]',
+  note: '',
+  module_name: 'gpiodigital',
+  readtype: 'int',
+  required_configs: [
+    {
+      name: 'pin_num',
+      type: 'int'
+    }
+  ]
+},
+{
+  name: 'gpio int-int [writeonly]',
+  note: '',
+  module_name: 'gpiodigital',
+  writetype: 'int',
+  required_configs: [
+    {
+      name: 'pin_num',
+      type: 'int'
+    }
+  ]
+},
+{
   name: 'socket int-int',
   note: '',
   module_name: 'socket',

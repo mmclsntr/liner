@@ -44,33 +44,37 @@ $(function() {
     });
   }
 
-  readApp();
-  
-  $("button#read-reload").on("click", function() {
+  if (node.readtype) {
     readApp();
-  });
+    
+    $("button#read-reload").on("click", function() {
+      readApp();
+    });
 
-  var intervalflag = true;
-  $("input#read-autoreload").change(function() {
-    if ($(this).prop("checked")) {
-      console.log("auto reload ON");
-      intervalflag = true;
-      var intervalid = setInterval(function() {
-        readApp()
-        if (!intervalflag) {
-          clearInterval(intervalid);
-        }
-      }, 1000);
-    } else {
-      console.log("auto reload OFF");
-      intervalflag = false;
+    var intervalflag = true;
+    $("input#read-autoreload").change(function() {
+      if ($(this).prop("checked")) {
+        console.log("auto reload ON");
+        intervalflag = true;
+        var intervalid = setInterval(function() {
+          readApp()
+          if (!intervalflag) {
+            clearInterval(intervalid);
+          }
+        }, 1000);
+      } else {
+        console.log("auto reload OFF");
+        intervalflag = false;
 
-    }
-  });
+      }
+    });
+  }
   
-  $("button#write-send").on("click", function() {
-    writeApp();
-  });
+  if (node.writetype) {
+    $("button#write-send").on("click", function() {
+      writeApp();
+    });
+  }
 
 
 });
@@ -108,17 +112,21 @@ $(function() {
         <table class="table">
           <tbody>
             <tr id="control-read">
-              <th>read</th>
-              <th><span id="read-value"></span></th>
-              <th><button class="btn btn-default" id="read-reload">reload</button></th>
-              <th><label><input type="checkbox" id="read-autoreload" value="autoreload">autoreload</label></th>
-              <th><input type="button" id="datastore" class="btn btn-default" onclick="location.href='/device/{{deviceid}}/app/{{node._id}}/datastore/'" value="datastore"></th>
+              {% if node.readtype is defined %}
+                <th>read</th>
+                <th><span id="read-value"></span></th>
+                <th><button class="btn btn-default" id="read-reload">reload</button></th>
+                <th><label><input type="checkbox" id="read-autoreload" value="autoreload">autoreload</label></th>
+                <th><input type="button" id="datastore" class="btn btn-default" onclick="location.href='/device/{{deviceid}}/app/{{node._id}}/datastore/'" value="datastore"></th>
+              {% endif %}
             </tr>
             <tr id="control-write">
-              <th>write</th>
-              <th><input type="text" class="form-control" id="write-value" name="value" value=""></th>
-              <th><span id="write-type">type: {{node.writetype}}</span></th>
-              <th><button class="btn btn-default" id="write-send">send</button></th>
+              {% if node.writetype is defined %}
+                <th>write</th>
+                <th><input type="text" class="form-control" id="write-value" name="value" value=""></th>
+                <th><span id="write-type">type: {{node.writetype}}</span></th>
+                <th><button class="btn btn-default" id="write-send">send</button></th>
+              {% endif %}
             </tr>
           </tbody>
         </table>
