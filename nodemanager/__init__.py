@@ -81,7 +81,7 @@ def add(node_module_id: str, new_node: dict) -> None:
   col = databasehelper.get_collection(db, DB_COLLECTION_nodeS)
   node_module_info = find_node_module_info(node_module_id)
   new_node['module_name'] = node_module_info['module_name']
-  new_node['global_node_id'] = node_module_id
+  new_node['node_module_id'] = node_module_id
   if '_id' in new_node:
     new_node["_id"] = ObjectId(new_node["_id"])
   result = databasehelper.insert(col, new_node)
