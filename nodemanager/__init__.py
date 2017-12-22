@@ -1,5 +1,4 @@
 import importlib
-import logging
 import os
 import shutil
 from bson.objectid import ObjectId
@@ -8,13 +7,14 @@ from nodes.node import Node
 import datastoremanager
 import databasehelper
 import configmanager
+import logmanager
 
 DB_NAME = configmanager.get_key('DATABASE', 'DatabaseName')
 DB_COLLECTION_NODES = configmanager.get_key('DATABASE', 'nodescollection')
 DB_COLLECTION_NODE_MODULES = configmanager.get_key('DATABASE', 'nodemodulescollection')
 DIR_NODES = configmanager.get_key('PATHS', 'Dirnodes')
 
-logging.basicConfig(level=logging.DEBUG)
+TAG = 'NodeManager'
 
 __nodes = {}
 
@@ -30,15 +30,15 @@ def __load_node(node_id: str):
   configs = {}
   for config in listnode['configs']:
     configs[config['name']] = eval(config['type'])(config['value'])
-  #try:
-  node = node_module.NodeAppMain(configs)
-  __nodes[node_id] = node
-  # Load datastore
-  if 'readtype' in listnode:
-    datastoremanager.run_datastorer(node_id, node)
-  logging.debug('load local node: ' + str(listnode))
-  #except:
-    #logging.error('load local node error: ' + str(listnode))
+  try:
+    node = node_module.NodeAppMain(configs)
+    __nodes[node_id] = node
+    # Load datastore
+    if 'readtype' in listnode:
+      datastoremanager.run_datastorer(node_id, node)
+    logmanager.log(TAG, 'Loaded node: ' + str(listnode))
+  except:
+    logmanager.error(TAG, sys.exc_info())
     
 
 def unload_nodes():
@@ -51,7 +51,7 @@ def __unload_node(node_id: str):
     __nodes[node_id] = None
     del __nodes[node_id]
     datastoremanager.kill_datastorer(node_id)
-    logging.debug('unload local node: ' + str(node_id))
+    logmanager.log(TAG, 'Unloaded node: ' + str(listnode))
 
 def list_nodes() -> list:
   db = databasehelper.get_database(DB_NAME)
@@ -105,18 +105,18 @@ def update_node_info(node_id: str, updated_node: dict) -> None:
   __load_node(node_id)
 
 def read_node_value(node_id: str):
-  #try:
+  try:
     readvalue = __nodes[node_id].read()
     return readvalue
-  #except:
-  #  logging.error('read error: ' + node_id)
+  except:
+    logmanager.error(TAG, sys.exc_info())
     
 
 def write_node_value(node_id, value) -> None:
   try:
     __nodes[node_id].write(value)
   except:
-    logging.error('write error: ' + node_id)
+    logmanager.error(TAG, sys.exc_info())
 
 def datastore(node_id: str, num: int) -> list:
   return datastoremanager.find_datastore_values(node_id, num)

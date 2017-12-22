@@ -7,8 +7,8 @@ import configmanager
 
 
 DB_NAME = configmanager.get_key('DATABASE', 'DatabaseName')
-DB_COLLECTION_LOCALAPPS = configmanager.get_key('DATABASE', 'LocalappsCollection')
-DB_COLLECTION_GLOBALAPPS = configmanager.get_key('DATABASE', 'GlobalappsCollection')
+DB_COLLECTION_LOCALAPPS = configmanager.get_key('DATABASE', 'NodesCollection')
+DB_COLLECTION_GLOBALAPPS = configmanager.get_key('DATABASE', 'NodeModulesCollection')
 DB_COLLECTION_RULES = configmanager.get_key('DATABASE', 'RulesCollection')
 DB_COLLECTION_DEVICES = configmanager.get_key('DATABASE', 'DevicesCollection')
 DB_COLLECTION_TEMP_DATASTORE = configmanager.get_key('DATABASE', 'DataStoreCollectionTemp')

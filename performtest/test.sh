@@ -49,7 +49,7 @@ cd ..
 LOG_MAIN=$DIRNAME"/"$RESULT_DIR"/main.log"
 echo -n "" > $LOG_MAIN
 # Run main script
-timeout $RUN_TIME $MAIN_CMD 2>&1 | awk '{print strftime("[%s]"),$0 } { fflush() } ' > $LOG_MAIN &
+timeout $RUN_TIME $MAIN_CMD 2>&1 | tee $LOG_MAIN &
 cd $DIRNAME
 
 
@@ -63,7 +63,7 @@ if [ "$CONNECTORS" != "" -a "$CONNECTORS" != "0" ]; then
   DATA_CHANGE_LOG=$RESULT_DIR"/data_change.log"
   head -n $(($CONNECTORS * 2)) $APP_IDS_FILE | awk 'NR%2==1' | while read appid
   do
-    echo -n 1 > ../apps/testapp/io/${appid}.io
+    echo -n 1 > ../nodes/testapp/io/${appid}.io
     change_time=`date +%s%N`
     echo ${change_time:0:10}"."${change_time:10}","$appid >> $DATA_CHANGE_LOG
     sleep 0.5
@@ -93,9 +93,9 @@ do
   DATASTORE_FILE_APP=$RESULT_DIR/datastore_${appid}_app.log
 
   python datacollect.py $appid > $DATASTORE_FILE_DB
-  mv ../apps/testapp/logs/${appid}.log $DATASTORE_FILE_APP
+  mv ../nodes/testapp/logs/${appid}.log $DATASTORE_FILE_APP
 
-  rm ../apps/testapp/io/${appid}.io
+  rm ../nodes/testapp/io/${appid}.io
 
   # Extract read log
 

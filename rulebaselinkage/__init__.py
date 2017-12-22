@@ -3,14 +3,16 @@ import configmanager
 import nodemanager
 import threading
 import time
-import logging
 import pymongo
+import logmanager
 from bson.objectid import ObjectId
 
 DB_NAME = configmanager.get_key('DATABASE', 'DatabaseName')
 DB_COLLECTION_RULES = configmanager.get_key('DATABASE', 'RulesCollection')
 DB_COLLECTION_TEMP_DATASTORE = configmanager.get_key('DATABASE', 'DataStoreCollectionTemp')
 INTERVAL = float(configmanager.get_key('INTERVALS', 'RulebaseInterval'))
+
+TAG = 'RuleBaseLinkage'
  
 class RuleBaseLinkageThread(threading.Thread):
   __instance = None
@@ -22,7 +24,6 @@ class RuleBaseLinkageThread(threading.Thread):
 
   def __init__(self) -> None:
     super(RuleBaseLinkageThread, self).__init__()
-    logging.basicConfig(level=logging.DEBUG)
     self.interval = INTERVAL
 
   def __connectnodes(self) -> None:
@@ -55,7 +56,7 @@ class RuleBaseLinkageThread(threading.Thread):
 
         # Rule check
         if eval(firstrule) and not eval(secondrule):
-          logging.info('ignite: ' + str(connection))
+          logmanager.log(TAG, "Detected: " + str(connection))
           action = connection['action']
           if 'type' not in action:
             continue

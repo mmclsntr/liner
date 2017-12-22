@@ -1,19 +1,19 @@
 from bson.objectid import ObjectId
 import pymongo
-import logging
 
 import databasehelper
 import threading
 import time
 from nodes.node import Node
 import configmanager
+import logmanager
 
 DB_NAME = configmanager.get_key('DATABASE', 'DatabaseName')
 DB_COLLECTION_TEMP_DATASTORE = configmanager.get_key('DATABASE', 'DataStoreCollectionTemp')
 
-logging.basicConfig(level=logging.DEBUG)
-
 INTERVAL = float(configmanager.get_key('INTERVALS', 'DatastoreInterval'))
+
+TAG = 'DataStoreManager'
 
 class DataStoreThread(threading.Thread):
   def __init__(self, node: Node, node_id: str) -> None:
@@ -30,14 +30,13 @@ class DataStoreThread(threading.Thread):
     else:
       col = databasehelper.get_collection(db, colname)
     while self.__isrunning:
-      #try:
+      try:
         readVal = self.__node.read()
         doc = {'time': time.time(), 'value': readVal}
         databasehelper.insert(col, doc)
         time.sleep(self.interval)
-      #except:
-      #  logging.error('datastore read error: ' + self.__id)
-         
+      except:
+        logmanager.error(TAG, sys.exc_info())
 
   def run(self) -> None:
     self.__isrunning = True
