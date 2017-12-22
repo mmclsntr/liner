@@ -28,6 +28,7 @@ class RuleBaseLinkageThread(threading.Thread):
 
   def __connectnodes(self) -> None:
     db = dbhelper.get_database(DB_NAME)
+    times = {}
     while self.__isrunning:
       connectionscol = dbhelper.get_collection(db, DB_COLLECTION_RULES)
       connections = list(dbhelper.find(connectionscol, {}))
@@ -41,25 +42,33 @@ class RuleBaseLinkageThread(threading.Thread):
           continue
 
         eventnodecol = dbhelper.get_collection(db, DB_COLLECTION_TEMP_DATASTORE + str(event['nodeid']))
-        eventnodevalues = dbhelper.find(eventnodecol, {}, dict(sort=[('time', pymongo.DESCENDING)], limit=2))
-        # Sort with time by desc
-        desceventnodevalues = eventnodevalues
+        eventnodeid = str(event['nodeid'])
+        eventnodevalues = {}
+        if eventnodeid in times:
+          eventnodevalues = dbhelper.find(eventnodecol, {'time': {"$gt": times[eventnodeid]}}, dict(sort=[('time', pymongo.ASCENDING)], limit=5))
+        else:
+          eventnodevalues = dbhelper.find(eventnodecol, {}, dict(sort=[('time', pymongo.ASCENDING)], limit=5))
 
-        firstvalue = str(desceventnodevalues[0]['value'])
-        secondvalue = str(desceventnodevalues[1]['value'])
+        firstvalue = str(eventnodevalues[0]['value'])
+        secondvalue = str(eventnodevalues[1]['value'])
         eventoperator = str(event['operator'])
         eventvalue = str(event['value'])
         eventtype = str(event['type'])
+
+        #logmanager.log(TAG, "Event first time: " + str(eventnodevalues[0]['time']))
+        times[eventnodeid] = float(eventnodevalues[0]['time'])
 
         firstrule = eventtype + "('" + firstvalue + "') " + eventoperator + " " + eventtype + "('" + eventvalue + "')"
         secondrule = eventtype + "('" + secondvalue + "') " + eventoperator + " " + eventtype + "('" + eventvalue + "')"
 
         # Rule check
-        if eval(firstrule) and not eval(secondrule):
+        if eval(secondrule) and not eval(firstrule):
           logmanager.log(TAG, "Detected: " + str(connection))
           action = connection['action']
+
           if 'type' not in action:
             continue
+
           node_id = action['nodeid']
           nodemanager.write_node_value(str(node_id), eval(action['type'] + "('" + str(action['value']) + "')"))
 
