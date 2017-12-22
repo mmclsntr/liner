@@ -11,6 +11,7 @@ DB_NAME = configmanager.get_key('DATABASE', 'DatabaseName')
 DB_COLLECTION_RULES = configmanager.get_key('DATABASE', 'RulesCollection')
 DB_COLLECTION_TEMP_DATASTORE = configmanager.get_key('DATABASE', 'DataStoreCollectionTemp')
 INTERVAL = float(configmanager.get_key('INTERVALS', 'RulebaseInterval'))
+BUFFER_SIZE = int(configmanager.get_key('OTHER', 'buffersize'))
 
 TAG = 'RuleBaseLinkage'
  
@@ -45,32 +46,45 @@ class RuleBaseLinkageThread(threading.Thread):
         eventnodeid = str(event['nodeid'])
         eventnodevalues = {}
         if eventnodeid in times:
-          eventnodevalues = dbhelper.find(eventnodecol, {'time': {"$gt": times[eventnodeid]}}, dict(sort=[('time', pymongo.ASCENDING)], limit=5))
+          eventnodevalues = list(dbhelper.find(eventnodecol, {'time': {"$gt": times[eventnodeid]}}, dict(sort=[('time', pymongo.ASCENDING)], limit=BUFFER_SIZE)))
         else:
-          eventnodevalues = dbhelper.find(eventnodecol, {}, dict(sort=[('time', pymongo.ASCENDING)], limit=5))
+          eventnodevalues = list(dbhelper.find(eventnodecol, {}, dict(sort=[('time', pymongo.ASCENDING)], limit=BUFFER_SIZE)))
 
-        firstvalue = str(eventnodevalues[0]['value'])
-        secondvalue = str(eventnodevalues[1]['value'])
-        eventoperator = str(event['operator'])
-        eventvalue = str(event['value'])
-        eventtype = str(event['type'])
-
-        #logmanager.log(TAG, "Event first time: " + str(eventnodevalues[0]['time']))
-        times[eventnodeid] = float(eventnodevalues[0]['time'])
-
-        firstrule = eventtype + "('" + firstvalue + "') " + eventoperator + " " + eventtype + "('" + eventvalue + "')"
-        secondrule = eventtype + "('" + secondvalue + "') " + eventoperator + " " + eventtype + "('" + eventvalue + "')"
-
-        # Rule check
-        if eval(secondrule) and not eval(firstrule):
-          logmanager.log(TAG, "Detected: " + str(connection))
-          action = connection['action']
-
-          if 'type' not in action:
+        firstvalue = ''
+        secondvalue = ''
+        firsttime = 0.0
+        secondtime = 0.0
+        for eventnodevalue in eventnodevalues:
+          tempvalue = secondvalue
+          temptime = secondtime
+          secondvalue = str(eventnodevalue['value'])
+          secondtime = float(eventnodevalue['time'])
+          firstvalue = tempvalue
+          firsttime = temptime
+          if firstvalue == '' or firsttime == 0.0:
             continue
+          eventoperator = str(event['operator'])
+          eventvalue = str(event['value'])
+          eventtype = str(event['type'])
 
-          node_id = action['nodeid']
-          nodemanager.write_node_value(str(node_id), eval(action['type'] + "('" + str(action['value']) + "')"))
+          #logmanager.log(TAG, "Event first time: " + eventnodeid + '  ' + str(eventnodevalue['time']))
+          times[eventnodeid] = firsttime
+
+          firstrule = eventtype + "('" + firstvalue + "') " + eventoperator + " " + eventtype + "('" + eventvalue + "')"
+          secondrule = eventtype + "('" + secondvalue + "') " + eventoperator + " " + eventtype + "('" + eventvalue + "')"
+
+
+          # Rule check
+          if eval(secondrule) and not eval(firstrule):
+            logmanager.log(TAG, "Detected: " + str(connection))
+            action = connection['action']
+
+            if 'type' not in action:
+              break
+
+            node_id = action['nodeid']
+            nodemanager.write_node_value(str(node_id), eval(action['type'] + "('" + str(action['value']) + "')"))
+            break
 
       time.sleep(self.interval)
 

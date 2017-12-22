@@ -78,6 +78,10 @@ sleep 2
 echo "Done"
 echo ""
 
+
+exit
+
+
 echo "Collecting and Calculating datastores..."
 #
 #DATASTORE_CALC_DB=$RESULT_DIR/datastore_calc_db.rst
