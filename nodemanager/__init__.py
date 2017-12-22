@@ -10,9 +10,9 @@ import databasehelper
 import configmanager
 
 DB_NAME = configmanager.get_key('DATABASE', 'DatabaseName')
-DB_COLLECTION_nodeS = configmanager.get_key('DATABASE', 'nodescollection')
-DB_COLLECTION_node_moduleS = configmanager.get_key('DATABASE', 'nodemodulescollection')
-DIR_nodeS = configmanager.get_key('PATHS', 'Dirnodes')
+DB_COLLECTION_NODES = configmanager.get_key('DATABASE', 'nodescollection')
+DB_COLLECTION_NODE_MODULES = configmanager.get_key('DATABASE', 'nodemodulescollection')
+DIR_NODES = configmanager.get_key('PATHS', 'Dirnodes')
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -53,32 +53,32 @@ def __unload_node(node_id: str):
 
 def list_nodes() -> list:
   db = databasehelper.get_database(DB_NAME)
-  col = databasehelper.get_collection(db, DB_COLLECTION_nodeS)
+  col = databasehelper.get_collection(db, DB_COLLECTION_NODES)
   listnodes = list(databasehelper.find(col, {}))
   return listnodes
 
 def list_node_modules() -> list:
   db = databasehelper.get_database(DB_NAME)
-  col = databasehelper.get_collection(db, DB_COLLECTION_node_moduleS)
+  col = databasehelper.get_collection(db, DB_COLLECTION_NODE_MODULES)
   listnodes = list(databasehelper.find(col, {}))
   return listnodes
 
 def find_node_info(node_id: str) -> dict:
   db = databasehelper.get_database(DB_NAME)
-  col = databasehelper.get_collection(db, DB_COLLECTION_nodeS)
+  col = databasehelper.get_collection(db, DB_COLLECTION_NODES)
   nodeinfo = list(databasehelper.find(col, {'_id': ObjectId(node_id)}))
   return nodeinfo[0]
 
 def find_node_module_info(node_module_id: str) -> dict:
   db = databasehelper.get_database(DB_NAME)
-  col = databasehelper.get_collection(db, DB_COLLECTION_node_moduleS)
+  col = databasehelper.get_collection(db, DB_COLLECTION_NODE_MODULES)
   nodeinfo = list(databasehelper.find(col, {'_id': ObjectId(node_module_id)}))
   return nodeinfo[0]
 
 def add(node_module_id: str, new_node: dict) -> None:
   # Add info
   db = databasehelper.get_database(DB_NAME)
-  col = databasehelper.get_collection(db, DB_COLLECTION_nodeS)
+  col = databasehelper.get_collection(db, DB_COLLECTION_NODES)
   node_module_info = find_node_module_info(node_module_id)
   new_node['module_name'] = node_module_info['module_name']
   new_node['node_module_id'] = node_module_id
@@ -91,7 +91,7 @@ def add(node_module_id: str, new_node: dict) -> None:
 
 def delete(node_id: str) -> None:
   db = databasehelper.get_database(DB_NAME)
-  col = databasehelper.get_collection(db, DB_COLLECTION_nodeS)
+  col = databasehelper.get_collection(db, DB_COLLECTION_NODES)
   result = databasehelper.delete(col, {'_id': ObjectId(node_id)})
   __unload_node(node_id)
   datastoremanager.remove_datastore(node_id)
@@ -100,7 +100,7 @@ def delete(node_id: str) -> None:
 def update_node_info(node_id: str, updated_node: dict) -> None:
   # Add info
   db = databasehelper.get_database(DB_NAME)
-  col = databasehelper.get_collection(db, DB_COLLECTION_nodeS)
+  col = databasehelper.get_collection(db, DB_COLLECTION_NODES)
   result = databasehelper.update(col, {'_id': ObjectId(node_id)}, updated_node)
   __load_node(node_id)
   # Add node file
