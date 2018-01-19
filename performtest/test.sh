@@ -79,7 +79,7 @@ echo "Done"
 echo ""
 
 
-exit
+#exit
 
 
 echo "Collecting and Calculating datastores..."
