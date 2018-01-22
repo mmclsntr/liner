@@ -92,6 +92,8 @@ class WebManager:
     info['name'] = request.form['name']
     info['note'] = request.form['note']
     info['module_name'] = node_moduleinfo['module_name']
+    if 'parent_module_name' in node_moduleinfo:
+      info['parent_module_name'] = node_moduleinfo['parent_module_name']
     if 'readtype' in node_moduleinfo:
       info['readtype'] = node_moduleinfo['readtype']
     if 'writetype' in node_moduleinfo:

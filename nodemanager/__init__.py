@@ -1,5 +1,6 @@
 import importlib
 import os
+import sys
 import shutil
 from bson.objectid import ObjectId
 
@@ -12,11 +13,16 @@ import logmanager
 DB_NAME = configmanager.get_key('DATABASE', 'DatabaseName')
 DB_COLLECTION_NODES = configmanager.get_key('DATABASE', 'nodescollection')
 DB_COLLECTION_NODE_MODULES = configmanager.get_key('DATABASE', 'nodemodulescollection')
+DB_COLLECTION_PARENT_NODE_MODULES = configmanager.get_key('DATABASE', 'parentnodemodulescollection')
+DB_COLLECTION_PARENT_NODES = configmanager.get_key('DATABASE', 'parentnodescollection')
 DIR_NODES = configmanager.get_key('PATHS', 'Dirnodes')
 
 TAG = 'NodeManager'
 
 __nodes = {}
+__parent_nodes = {}
+
+sys.path.append(os.getcwd() + '/nodes')
 
 def load_nodes():
   listnodes = list_nodes()
@@ -25,13 +31,36 @@ def load_nodes():
 
 def __load_node(node_id: str):
   listnode = find_node_info(node_id)
-  node_module = importlib.import_module('nodes.' + listnode['module_name'])
+  # Import parent node module
+  parent_node = None
+  if 'parent_module_name' in listnode and listnode['parent_module_name'] != '' and listnode['parent_module_name'] != None:
+    parent_module_name = listnode['parent_module_name']
+    listparentmodules = find_parent_node_module_info_list_w_name(parent_module_name)
+    listparentmodule = listparentmodules[0]
+    parent_module_id = str(listparentmodule['_id'])
+    if parent_module_id in __parent_nodes:
+      parent_node = __parent_nodes[parent_module_id]
+    else:
+      parent_module = importlib.import_module(parent_module_name)
+      listparentnodes = find_parent_node_info_list_w_module_id(parent_module_id)
+      listparentnode = listparentnodes[0]
+      configs = {}
+      for config in listparentnode['configs']:
+        configs[config['name']] = eval(config['type'])(config['value'])
+      try:
+        parent_node = parent_module.ParentMain(configs)
+        __parent_nodes[parent_module_id] = parent_node
+        logmanager.log(TAG, 'Loaded parent node: ' + str(listparentnode))
+      except:
+        logmanager.error(TAG, sys.exc_info())
+  # Import node module
+  node_module = importlib.import_module(listnode['module_name'])
   # Rearrenge configs
   configs = {}
   for config in listnode['configs']:
     configs[config['name']] = eval(config['type'])(config['value'])
   try:
-    node = node_module.NodeAppMain(configs)
+    node = node_module.NodeMain(configs, parent=parent_node)
     __nodes[node_id] = node
     # Load datastore
     if 'readtype' in listnode:
@@ -39,7 +68,6 @@ def __load_node(node_id: str):
     logmanager.log(TAG, 'Loaded node: ' + str(listnode))
   except:
     logmanager.error(TAG, sys.exc_info())
-    
 
 def unload_nodes():
   listnodes = list_nodes()
@@ -71,11 +99,37 @@ def find_node_info(node_id: str) -> dict:
   nodeinfo = list(databasehelper.find(col, {'_id': ObjectId(node_id)}))
   return nodeinfo[0]
 
+def find_parent_node_info(node_id: str) -> dict:
+  db = databasehelper.get_database(DB_NAME)
+  col = databasehelper.get_collection(db, DB_COLLECTION_PARENT_NODES)
+  nodeinfo = list(databasehelper.find(col, {'_id': ObjectId(node_id)}))
+  return nodeinfo[0]
+
+def find_parent_node_info_list_w_module_id(parent_module_id: str) -> list:
+  db = databasehelper.get_database(DB_NAME)
+  col = databasehelper.get_collection(db, DB_COLLECTION_PARENT_NODES)
+  nodeinfo = list(databasehelper.find(col, {'parent_node_module_id': parent_module_id}))
+  return nodeinfo
+
 def find_node_module_info(node_module_id: str) -> dict:
   db = databasehelper.get_database(DB_NAME)
   col = databasehelper.get_collection(db, DB_COLLECTION_NODE_MODULES)
   nodeinfo = list(databasehelper.find(col, {'_id': ObjectId(node_module_id)}))
   return nodeinfo[0]
+
+def find_parent_node_module_info(node_module_id: str) -> dict:
+  db = databasehelper.get_database(DB_NAME)
+  col = databasehelper.get_collection(db, DB_COLLECTION_PARENT_NODE_MODULES)
+  nodeinfo = list(databasehelper.find(col, {'_id': ObjectId(node_module_id)}))
+  return nodeinfo[0]
+
+def find_parent_node_module_info_list_w_name(parent_module_name: str) -> list:
+  db = databasehelper.get_database(DB_NAME)
+  col = databasehelper.get_collection(db, DB_COLLECTION_PARENT_NODE_MODULES)
+  nodeinfo = list(databasehelper.find(col, {'module_name': parent_module_name}))
+  return nodeinfo
+  
+
 
 def add(node_module_id: str, new_node: dict) -> None:
   # Add info

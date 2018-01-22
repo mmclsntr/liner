@@ -16,9 +16,9 @@ class NodeMain(Node):
         "EPC": "80"
       }
       if self.__parent.read(params) == "31":
-        return True
-      else:
         return False
+      else:
+        return True
     else:
       return None
     

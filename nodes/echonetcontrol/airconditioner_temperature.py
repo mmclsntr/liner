@@ -1,5 +1,5 @@
-from node import Node
-from node import Parent
+from echonetcontrol.node import Node
+from echonetcontrol.node import Parent
 
 class NodeMain(Node):
   def __init__(self, config: dict, parent=None):
