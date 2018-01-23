@@ -203,6 +203,19 @@ node_modules = [
   writetype: 'str',
   required_configs: [
   ]
+},
+{
+  name: 'Websocket Client',
+  note: '',
+  module_name: 'websocketclient.app',
+  readtype: 'str',
+  writetype: 'str',
+  required_configs: [
+    {
+      name: "URL",
+      type: "str"
+    }
+  ]
 }
 ]
 

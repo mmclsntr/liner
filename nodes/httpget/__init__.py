@@ -1,21 +1,21 @@
 import urllib
 import json
-from nodes.node import Node
+from node import Node
 
-class NodeAppMain(Node):
-  def __init__(self, config: dict):
-    super(NodeAppMain, self).__init__()
+class NodeMain(Node):
+  def __init__(self, config: dict, parent=None):
+    super().__init__(config, parent)
     self.__readuri = config['read_uri']
     self.__writeuri = config['write_uri']
     self.__httpget = HTTPGet(self.__readuri, self.__writeuri)
 
   def read(self):
-    super(NodeAppMain, self).read()
+    super().read()
     _value = self.__httpget.read()
     return _value
 
   def write(self, value):
-    super(NodeAppMain, self).write(value)
+    super().write(value)
     self.__httpget.write(value)
 
 
