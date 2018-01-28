@@ -136,14 +136,10 @@ def add_rule(event_node, action_node):
   databasehelper.insert(col, rule)
 
 
-
-
 if __name__ == "__main__":
-# Arguments
-# data numbers and connecting mode (0: neighbors, 1: chains)
   argvs = sys.argv
   if len(argvs) < 2:
-    print('Please set number of apps and mode')
+    print('Please set number of apps and rules')
     exit(0)
 
   num = argvs[1]

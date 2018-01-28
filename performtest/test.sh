@@ -78,19 +78,9 @@ sleep 2
 echo "Done"
 echo ""
 
-
-#exit
-
-
 echo "Collecting and Calculating datastores..."
-#
-#DATASTORE_CALC_DB=$RESULT_DIR/datastore_calc_db.rst
-#DATASTORE_CALC_APP=$RESULT_DIR/datastore_calc_app.rst
-#
-#echo -n "" > $DATASTORE_CALC_DB
-#echo -n "" > $DATASTORE_CALC_APP
-#
-#
+
+
 cat $APP_IDS_FILE | while read appid
 do
   DATASTORE_FILE_DB=$RESULT_DIR/datastore_${appid}_db.log
@@ -100,28 +90,7 @@ do
   mv ../nodes/testapp/logs/${appid}.log $DATASTORE_FILE_APP
 
   rm ../nodes/testapp/io/${appid}.io
-
-  # Extract read log
-
-  # Extract write log
-
-  # Get Interval
-  #python datacalc.py $DATASTORE_FILE_DB >> $DATASTORE_CALC_DB
-  #python datacalc.py $DATASTORE_FILE_APP >> $DATASTORE_CALC_APP
 done
-#
-#echo "Done"
-#echo ""
-#
-#echo "Integrating datastore result..."
-#
-#python datarst_integrate.py $DATASTORE_CALC_DB > $RESULT_DIR/datastore_avg_db.rst
-#python datarst_integrate.py $DATASTORE_CALC_APP > $RESULT_DIR/datastore_avg_app.rst
-#
-#echo "Done"
-#echo ""
-
-
 
 echo ""
 echo "Done"
