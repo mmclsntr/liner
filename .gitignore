@@ -98,7 +98,7 @@ ENV/
 # mypy
 .mypy_cache/
 
-
+.DS_Store
 test.py
 performtest/result*
 performtest/appids.txt

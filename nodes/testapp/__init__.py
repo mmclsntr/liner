@@ -1,4 +1,4 @@
-from nodes.node import Node
+from node import Node
 import time
 import os
 
