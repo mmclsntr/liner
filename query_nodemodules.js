@@ -195,6 +195,15 @@ node_modules = [
   ]
 },
 {
+  name: 'MQTT broker',
+  note: '',
+  module_name: 'mqtt_broker.app',
+  parent_module_name: 'mqtt_broker.broker',
+  writetype: 'str',
+  required_configs: [
+  ]
+},
+{
   name: 'Websocket get newest values',
   note: '',
   module_name: 'websocketserver.newest_client',
@@ -260,6 +269,14 @@ parent_node_modules = [
       type: 'int'
     }
   ]
+},
+{
+  _id: ObjectId('444444444444444444444444'),
+  name: 'MQTT Broker',
+  module_name: 'mqtt_broker.broker',
+  note: '',
+  required_configs: [
+  ]
 }
 ]
 
@@ -303,6 +320,14 @@ parent_nodes = [
       type: 'int',
       value: 8000
     }
+  ]
+},
+{
+  name: 'MQTT Broker',
+  module_name: 'mqtt_broker.broker',
+  note: '',
+  parent_node_module_id: '444444444444444444444444',
+  configs: [
   ]
 }
 ]
