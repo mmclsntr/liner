@@ -63,8 +63,8 @@ if [ "$CONNECTORS" != "" -a "$CONNECTORS" != "0" ]; then
   DATA_CHANGE_LOG=$RESULT_DIR"/data_change.log"
   head -n $(($CONNECTORS * 2)) $APP_IDS_FILE | awk 'NR%2==1' | while read appid
   do
-    echo -n 1 > ../nodes/testapp/io/${appid}.io
     change_time=`date +%s%N`
+    echo -n 1 > ../nodes/testapp/io/${appid}.io
     echo ${change_time:0:10}"."${change_time:10}","$appid >> $DATA_CHANGE_LOG
     sleep 0.5
   done &
