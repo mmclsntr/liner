@@ -34,6 +34,7 @@ echo ""
 DIRNAME=`pwd`
 PROFILE_SCRIPT="profile_perform.sh"
 RUN_TIME=60
+RUN_TIME_P=70
 MAIN_CMD="python main.py"
 MONGO_CMD="mongodb.conf"
 
@@ -42,9 +43,10 @@ LOG_USAGE_DB=$RESULT_DIR"/usage_mongo.log"
 
 echo "Running main and profiling..."
 # Run profiling for main
-timeout $RUN_TIME bash $PROFILE_SCRIPT $MAIN_CMD > $LOG_USAGE_MAIN &
+timeout $RUN_TIME_P bash $PROFILE_SCRIPT $MAIN_CMD > $LOG_USAGE_MAIN &
 # Run profiling for mongodb
-timeout $RUN_TIME bash $PROFILE_SCRIPT $MONGO_CMD > $LOG_USAGE_DB & 
+timeout $RUN_TIME_P bash $PROFILE_SCRIPT $MONGO_CMD > $LOG_USAGE_DB & 
+sleep 5
 cd ..
 LOG_MAIN=$DIRNAME"/"$RESULT_DIR"/main.log"
 echo -n "" > $LOG_MAIN
@@ -73,7 +75,7 @@ fi
 
 
 sleep $(($RUN_TIME - 25))
-sleep 2
+sleep 5
 
 echo "Done"
 echo ""
