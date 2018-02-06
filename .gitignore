@@ -103,3 +103,4 @@ test.py
 performtest
 nodes/testapp/io
 nodes/testapp/logs
+dump*
