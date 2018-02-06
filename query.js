@@ -1,9 +1,33 @@
-globalapps = [
+node_modules = [
 {
   name: 'gpio int-int',
   note: '',
   module_name: 'gpiodigital',
   readtype: 'int',
+  writetype: 'int',
+  required_configs: [
+    {
+      name: 'pin_num',
+      type: 'int'
+    }
+  ]
+},
+{
+  name: 'gpio int-int [readonly]',
+  note: '',
+  module_name: 'gpiodigital',
+  readtype: 'int',
+  required_configs: [
+    {
+      name: 'pin_num',
+      type: 'int'
+    }
+  ]
+},
+{
+  name: 'gpio int-int [writeonly]',
+  note: '',
+  module_name: 'gpiodigital',
   writetype: 'int',
   required_configs: [
     {
@@ -30,9 +54,60 @@ globalapps = [
   ]
 },
 {
-  name: 'phue onoff bool-bool',
+  name: 'http get str-str',
+  note: '',
+  module_name: 'httpget',
+  readtype: 'str',
+  writetype: 'str',
+  required_configs: [
+    {
+      name: 'read_uri',
+      type: 'str'
+    },
+    {
+      name: 'write_uri',
+      type: 'str'
+    }
+  ]
+},
+{
+  name: 'mabeee server int-int',
+  note: '',
+  module_name: 'mabeeeserver',
+  readtype: 'int',
+  writetype: 'int',
+  required_configs: [
+    {
+      name: 'uri',
+      type: 'str'
+    },
+    {
+      name: 'deviceid',
+      type: 'int'
+    }
+  ]
+},
+{
+  name: 'phue onoff',
   note: 'Please press hue bridge button before adding this app.',
   module_name: 'phueonoffmanager',
+  readtype: 'str',
+  writetype: 'str',
+  required_configs: [
+    {
+      name: 'address',
+      type: 'str'
+    },
+    {
+      name: 'light_name',
+      type: 'str'
+    }
+  ]
+},
+{
+  name: 'phue brightness int-int',
+  note: 'Please press hue bridge button before adding this app.',
+  module_name: 'phuebrightnessmanager',
   readtype: 'int',
   writetype: 'int',
   required_configs: [
@@ -47,132 +122,218 @@ globalapps = [
   ]
 },
 {
-  name: 'phue onoff bool-bool',
-  note: 'Please press hue bridge button before adding this app.',
-  module_name: 'phueonoffmanager',
+  name: 'ifttt outgoing webhocks',
+  note: 'https://ifttt.com/maker_webhooks',
+  module_name: 'iftttoutgoingwebhocks',
+  readtype: 'str',
+  writetype: 'str',
+  required_configs: [
+    {
+      name: 'uri',
+      type: 'str'
+    }
+  ]
+},
+{
+  name: 'Echonet lite power',
+  note: '',
+  module_name: 'echonetcontrol.airconditioner_power',
+  parent_module_name: 'echonetcontrol.echonetlitecontroller',
+  readtype: 'bool',
+  writetype: 'bool',
+  required_configs: [
+    {
+      name: 'IP Address',
+      type: 'str'
+    }
+  ]
+},
+{
+  name: 'Echonet lite temprature',
+  note: '',
+  module_name: 'echonetcontrol.airconditioner_temperature',
+  parent_module_name: 'echonetcontrol.echonetlitecontroller',
   readtype: 'int',
   writetype: 'int',
   required_configs: [
     {
-      name: 'address',
+      name: 'IP Address',
+      type: 'str'
+    }
+  ]
+},
+{
+  name: 'HTTP Server router',
+  note: '',
+  module_name: 'httpserver.routerapp',
+  parent_module_name: 'httpserver.httpserver',
+  readtype: 'str',
+  writetype: 'str',
+  required_configs: [
+    {
+      name: 'route',
+      type: 'str'
+    }
+  ]
+},
+{
+  name: 'MQTT client',
+  note: '',
+  module_name: 'mqtt_client.app',
+  parent_module_name: '',
+  readtype: 'str',
+  writetype: 'str',
+  required_configs: [
+    {
+      name: 'topic',
       type: 'str'
     },
     {
-      name: 'light_name',
+      name: 'broker_host',
       type: 'str'
     }
   ]
-}
-]
-
-db.global_apps.drop();
-db.createCollection('global_apps');
-db.global_apps.insert(globalapps);
-result = db.global_apps.find();
-shellPrint(result);
-
-global_id = db.global_apps.find({name: 'gpio int-int'})[0]._id.valueOf();
-
-
-localapps = [
+},
 {
-  name: 'gpio23',
-  module_name: 'gpiodigital',
-  global_app_id: global_id,
-  readtype: 'int',
-  writetype: 'int',
+  name: 'MQTT broker',
   note: '',
-  configs: [
-    {
-      name: 'pin_num',
-      type: 'int',
-      value: NumberInt(23)
-    }
+  module_name: 'mqtt_broker.app',
+  parent_module_name: 'mqtt_broker.broker',
+  writetype: 'str',
+  required_configs: [
   ]
 },
 {
-  name: 'gpio24',
-  module_name: 'gpiodigital',
-  global_app_id: global_id,
-  readtype: 'int',
-  writetype: 'int',
+  name: 'Websocket get newest values',
   note: '',
-  configs: [
+  module_name: 'websocketserver.newest_client',
+  parent_module_name: 'websocketserver.server',
+  readtype: 'str',
+  writetype: 'str',
+  required_configs: [
+  ]
+},
+{
+  name: 'Websocket Client',
+  note: '',
+  module_name: 'websocketclient.app',
+  readtype: 'str',
+  writetype: 'str',
+  required_configs: [
     {
-      name: 'pin_num',
-      type: 'int',
-      value: NumberInt(24)
+      name: "URL",
+      type: "str"
     }
   ]
 }
 ]
 
-db.local_apps.drop();
-db.createCollection('local_apps');
-db.local_apps.insert(localapps);
-result = db.local_apps.find();
-shellPrint(result);
-
-gpio23_id = db.local_apps.find({name: 'gpio23'})[0]._id.valueOf();
-gpio24_id = db.local_apps.find({name: 'gpio24'})[0]._id.valueOf();
-
-
-
-devices = [
-  {
-    name: 'led1',
-    note: '',
-    apps: [gpio23_id]
-  },
-  {
-    name: 'led2',
-    note: '',
-    apps: [gpio24_id]
-  }
-]
-
-db.devices.drop();
-db.createCollection('devices');
-db.devices.insert(devices);
-result = db.devices.find();
+db.node_modules.drop();
+db.createCollection('node_modules');
+db.node_modules.insert(node_modules);
+result = db.node_modules.find();
 shellPrint(result);
 
 
-
-rules = [
+parent_node_modules = [
 {
-  name: 'gpio23 on with 24',
-  event: {
-    nodeid: gpio23_id, 
-    operator: '==', 
-    value: NumberInt(1),
-    type: 'int'
-  }, 
-  action: {
-    nodeid: gpio24_id, 
-    value: NumberInt(1),
-    type: 'int'
-  }
+  _id: ObjectId('111111111111111111111111'),
+  name: 'Echonet lite controller',
+  readtype: 'int',
+  writetype: 'int',
+  module_name: 'echonetcontrol.echonetlitecontroller',
+  note: '',
+  required_configs: [
+  ]
 },
 {
-  name: 'gpio23 off with 24',
-  event: {
-    nodeid: gpio23_id, 
-    operator: '==', 
-    value: NumberInt(0),
-    type: 'int'
-  }, 
-  action: {
-    nodeid: gpio24_id, 
-    value: NumberInt(0),
-    type: 'int'
-  }
+  _id: ObjectId('222222222222222222222222'),
+  name: 'HTTP Server',
+  readtype: 'str',
+  writetype: 'str',
+  module_name: 'httpserver.httpserver',
+  note: '',
+  required_configs: [
+  ]
+},
+{
+  _id: ObjectId('333333333333333333333333'),
+  name: 'Websocket Server',
+  readtype: 'str',
+  writetype: 'str',
+  module_name: 'websocketserver.server',
+  note: '',
+  required_configs: [
+    {
+      name: 'port',
+      type: 'int'
+    }
+  ]
+},
+{
+  _id: ObjectId('444444444444444444444444'),
+  name: 'MQTT Broker',
+  module_name: 'mqtt_broker.broker',
+  note: '',
+  required_configs: [
+  ]
 }
 ]
 
+db.parent_node_modules.drop();
+db.createCollection('parent_node_modules');
+db.parent_node_modules.insert(parent_node_modules);
+result = db.parent_node_modules.find();
+shellPrint(result);
 
-db.rules.drop();
-db.createCollection('rules');
-db.rules.insert(rules);
-result = db.rules.find();
+parent_nodes = [
+{
+  name: 'Echonet lite controller',
+  readtype: 'str',
+  writetype: 'str',
+  module_name: 'echonetcontrol.echonetlitecontroller',
+  note: '',
+  parent_node_module_id: '111111111111111111111111',
+  configs: [
+  ]
+},
+{
+  name: 'HTTP Server',
+  readtype: 'int',
+  writetype: 'int',
+  module_name: 'httpserver.httpserver',
+  note: '',
+  parent_node_module_id: '222222222222222222222222',
+  configs: [
+  ]
+},
+{
+  name: 'Websocket Server',
+  readtype: 'str',
+  writetype: 'str',
+  module_name: 'websocketserver.server',
+  note: '',
+  parent_node_module_id: '333333333333333333333333',
+  configs: [
+    {
+      name: 'port',
+      type: 'int',
+      value: 8000
+    }
+  ]
+},
+{
+  name: 'MQTT Broker',
+  module_name: 'mqtt_broker.broker',
+  note: '',
+  parent_node_module_id: '444444444444444444444444',
+  configs: [
+  ]
+}
+]
+
+db.parent_nodes.drop();
+db.createCollection('parent_nodes');
+db.parent_nodes.insert(parent_nodes);
+result = db.parent_nodes.find();
 shellPrint(result);
