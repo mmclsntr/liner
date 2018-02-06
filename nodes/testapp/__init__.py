@@ -5,20 +5,20 @@ import os
 IOFILE_DIR = os.path.dirname(os.path.abspath(__file__)) + '/io'
 LOGFILE_DIR = os.path.dirname(os.path.abspath(__file__)) + '/logs'
 
-class NodeAppMain(Node):
-  def __init__(self, config: dict):
-    super(NodeAppMain, self).__init__()
+class NodeMain(Node):
+  def __init__(self, config: dict, parent=None):
+    super().__init__(config, parent)
     self.__iofile = config['iofile']
     self.__logfile = config['logfile']
     self.__testapp = TestApp(self.__iofile, self.__logfile)
 
   def read(self):
-    super(NodeAppMain, self).read()
+    super().read()
     _value = self.__testapp.read()
     return int(_value)
 
   def write(self, value):
-    super(NodeAppMain, self).write(value)
+    super().write(value)
     self.__testapp.write(value)
 
 

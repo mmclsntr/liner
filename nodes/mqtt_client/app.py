@@ -35,8 +35,10 @@ class NodeMain(Node):
   
   def read(self):
     super().read()
-    if len(self.data_queue) > 0:
+    if len(self.data_queue) > 1:
       return self.data_queue.pop(0)
+    elif len(self.data_queue) == 1:
+      return self.data_queue[0]
     else:
       return None
 
