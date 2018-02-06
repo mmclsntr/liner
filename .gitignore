@@ -100,8 +100,6 @@ ENV/
 
 .DS_Store
 test.py
-performtest/result*
-performtest/appids.txt
+performtest
 nodes/testapp/io
 nodes/testapp/logs
-performtest/datastore_rst
