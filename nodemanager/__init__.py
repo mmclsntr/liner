@@ -1,3 +1,16 @@
+# Copyright 2018 Shintaro Yamasaki <hitorans@icloud.com>
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#     http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 import importlib
 import os
 import sys
@@ -79,7 +92,7 @@ def __unload_node(node_id: str):
     __nodes[node_id] = None
     del __nodes[node_id]
     datastoremanager.kill_datastorer(node_id)
-    logmanager.log(TAG, 'Unloaded node: ' + str(listnode))
+    logmanager.log(TAG, 'Unloaded node: ' + str(node_id))
 
 def list_nodes() -> list:
   db = databasehelper.get_database(DB_NAME)
@@ -115,6 +128,7 @@ def find_node_module_info(node_module_id: str) -> dict:
   db = databasehelper.get_database(DB_NAME)
   col = databasehelper.get_collection(db, DB_COLLECTION_NODE_MODULES)
   nodeinfo = list(databasehelper.find(col, {'_id': ObjectId(node_module_id)}))
+  print(nodeinfo)
   return nodeinfo[0]
 
 def find_parent_node_module_info(node_module_id: str) -> dict:

@@ -1,3 +1,16 @@
+# Copyright 2018 Shintaro Yamasaki <hitorans@icloud.com>
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#     http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 import databasehelper as dbhelper
 import configmanager
 import nodemanager
@@ -45,10 +58,11 @@ class RuleBaseLinkageThread(threading.Thread):
         eventnodecol = dbhelper.get_collection(db, DB_COLLECTION_TEMP_DATASTORE + str(event['nodeid']))
         eventnodeid = str(event['nodeid'])
         eventnodevalues = {}
-        if eventnodeid in times:
-          eventnodevalues = list(dbhelper.find(eventnodecol, {'time': {"$gt": times[eventnodeid]}}, dict(sort=[('time', pymongo.ASCENDING)], limit=BUFFER_SIZE)))
+        if str(connection['_id']) in times:
+          eventnodevalues = list(dbhelper.find(eventnodecol, {'time': {"$gt": times[str(connection['_id'])]}}, dict(sort=[('time', pymongo.ASCENDING)])))
         else:
-          eventnodevalues = list(dbhelper.find(eventnodecol, {}, dict(sort=[('time', pymongo.ASCENDING)], limit=BUFFER_SIZE)))
+          times[str(connection['_id'])] = time.time()
+          continue
 
         firstvalue = ''
         secondvalue = ''
@@ -68,7 +82,7 @@ class RuleBaseLinkageThread(threading.Thread):
           eventtype = str(event['type'])
 
           #logmanager.log(TAG, "Event first time: " + eventnodeid + '  ' + str(eventnodevalue['time']))
-          times[eventnodeid] = firsttime
+          times[str(connection['_id'])] = firsttime
 
           firstrule = eventtype + "('" + firstvalue + "') " + eventoperator + " " + eventtype + "('" + eventvalue + "')"
           secondrule = eventtype + "('" + secondvalue + "') " + eventoperator + " " + eventtype + "('" + eventvalue + "')"

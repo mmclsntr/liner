@@ -1,9 +1,21 @@
+# Copyright 2018 Shintaro Yamasaki <hitorans@icloud.com>
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#     http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 import sys,os
 from bson.objectid import ObjectId
 import json
 
-#sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/..') 
 import nodemanager
 import devicemanager
 import rulebaselinkage
@@ -15,9 +27,6 @@ DB_NAME = configmanager.get_key('DATABASE', 'DatabaseName')
 class WebManager:
   app = Flask(__name__)
   
-  def run_server(self):
-    self.app.run(host='0.0.0.0')
-
   def __init__(self, debug: bool):
     self.app.debug = debug
 
@@ -46,12 +55,13 @@ class WebManager:
 
   @app.route('/device/<deviceid>/app/<nodeid>', methods=['GET', 'POST'])
   def device_node(deviceid, nodeid):
-    appinfo = nodemanager.find_node_info(nodeid)
+    nodeinfo = nodemanager.find_node_info(nodeid)
     return render_template('device_app.html', islocal=True, node=nodeinfo, deviceid=deviceid)
 
   @app.route('/device/<deviceid>/app/<nodeid>/save/', methods=['POST'])
   def device_node_save(deviceid, nodeid):
     nodeinfo = nodemanager.find_node_info(nodeid)
+    print(nodeinfo)
     node_moduleinfo = nodemanager.find_node_module_info(nodeinfo['node_module_id'])
     info = {}
     info['name'] = request.form['name']
