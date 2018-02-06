@@ -5,7 +5,7 @@
 $(function() {
   var nodes = JSON.parse("{{nodes|safe}}".replace(/'/g, '"').replace(/ObjectId\(/g, "").replace(/\)/g, ""));
   console.log(nodes);
-  var connectors = JSON.parse("{{connectors|safe}}".replace(/'/g, '"').replace(/ObjectId\(/g, "").replace(/\)/g, "").replace(/True/g, "true").replace(/False/g, "false"));
+  var connectors = JSON.parse("{{ connectors|safe }}".replace(/'/g, '"').replace(/ObjectId\(/g, "").replace(/\)/g, "").replace(/True/g, "true").replace(/False/g, "false"));
   console.log(connectors);
 
   // select change
