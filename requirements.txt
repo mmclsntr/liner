@@ -26,4 +26,4 @@ urllib3==1.22
 websocket-client==0.46.0
 websocket-server==0.4
 websockets==4.0.1
-Werkzeug==0.12.2
+Werkzeug==0.15.3
