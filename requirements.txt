@@ -22,7 +22,7 @@ PyYAML==3.12
 requests==2.18.4
 six==1.11.0
 transitions==0.6.4
-urllib3==1.22
+urllib3==1.26.5
 websocket-client==0.46.0
 websocket-server==0.4
 websockets==4.0.1
